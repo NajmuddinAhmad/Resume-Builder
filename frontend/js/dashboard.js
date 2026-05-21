@@ -14,6 +14,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     setWelcomeTitle(profile.name || user.email.split('@')[0]);
   }
 
+  // ── Migrate Local Draft ──
+  const localDraft = localStorage.getItem('local_resume_draft');
+  if (localDraft) {
+    try {
+      const parsed = JSON.parse(localDraft);
+      if (Object.keys(parsed.sections || {}).length > 0 || parsed.title) {
+        await API.resumes.create({
+          title: parsed.title || 'Untitled Resume',
+          template_id: parsed.template_id || 'manhattan',
+          sections: parsed.sections || {},
+          styling: parsed.styling || {}
+        });
+        showToast('Your draft resume has been saved to your account!', 'success');
+      }
+      localStorage.removeItem('local_resume_draft');
+    } catch (e) {
+      console.error('Failed to migrate local draft:', e);
+    }
+  }
+
   // Load data
   await Promise.all([loadStats(), loadResumes()]);
 
