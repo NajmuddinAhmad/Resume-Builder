@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Builder — Build My Resume</title>
+  <link rel="stylesheet" href="css/variables.css?v=5">
+  <link rel="stylesheet" href="css/base.css?v=5">
+  <link rel="stylesheet" href="css/components.css?v=5">
+  <link rel="stylesheet" href="css/builder.css?v=5">
+  <!-- SortableJS for drag-and-drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+</head>
+<body class="builder-body">
+
+<!-- ═══════════════════════ BUILDER TOPBAR ═══════════════════════ -->
+<header class="builder-topbar" role="banner">
+  <div class="builder-topbar-left">
+    <a href="dashboard.html" class="builder-back-btn" aria-label="Back to dashboard">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </a>
+    <div class="builder-title-wrap">
+      <input type="text" id="resumeTitle" class="builder-title-input" value="Loading..." aria-label="Resume title">
+    </div>
+    <div class="autosave-indicator" id="autosaveIndicator" aria-live="polite">
+      <span class="autosave-icon">●</span>
+      <span class="autosave-text">Saved</span>
+    </div>
+  </div>
+  <div class="builder-topbar-center">
+    <div class="template-selector-mini" id="templateSelectorMini">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <span id="currentTemplateName">Manhattan</span>
+      <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+  <div class="builder-topbar-right">
+    <!-- Mobile preview toggle — only visible on small screens -->
+    <button id="mobilePreviewToggle" class="btn btn-outline btn-sm mobile-only" onclick="toggleMobilePreview()" aria-label="Toggle preview">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      Preview
+    </button>
+    <button id="builderThemeToggle" class="btn btn-ghost btn-icon btn-sm" aria-label="Toggle dark mode">
+      <svg class="icon-sun" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <div class="dropdown" id="exportDropdown">
+      <button class="btn btn-secondary btn-sm" id="exportBtn" aria-haspopup="true" aria-expanded="false">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="desktop-only">Export</span>
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="dropdown-menu" id="exportMenu" style="display:none">
+        <button class="dropdown-item" id="exportPDFBtn">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+          Download as PDF
+        </button>
+        <button class="dropdown-item" id="exportDOCXBtn">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="7 10 12 15 17 10"/></svg>
+          Download as DOCX
+        </button>
+        <button class="dropdown-item" id="printBtn">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print Resume
+        </button>
+        <button class="dropdown-item" id="shareBtn">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/></svg>
+          Copy Share Link
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" id="aiPanelBtn" onclick="toggleAIPanel()">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span class="desktop-only">AI Assist</span>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════════ BUILDER LAYOUT ═══════════════════════ -->
+<div class="builder-layout">
+
+  <!-- LEFT: Sections Sidebar -->
+  <aside class="sections-panel" id="sectionsPanel" aria-label="Resume sections">
+    <div class="sections-panel-header">
+      <h2>Sections</h2>
+      <button class="btn btn-ghost btn-icon btn-sm" id="sectionsToggle" aria-label="Toggle sections panel">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+    </div>
+    <div class="sections-list" id="sectionsList" role="list">
+      <!-- Dynamically populated -->
+    </div>
+    <div class="sections-add">
+      <button class="btn btn-secondary btn-sm w-full" id="addSectionBtn" onclick="showAddSectionMenu()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Section
+      </button>
+    </div>
+  </aside>
+
+  <!-- CENTER: Editor Forms -->
+  <main class="editor-panel" id="editorPanel" aria-label="Resume editor">
+    <div class="editor-scroll">
+      <!-- Section forms injected here -->
+      <div id="editorContent"></div>
+    </div>
+  </main>
+
+  <!-- RIGHT: Live Preview -->
+  <aside class="preview-panel" id="previewPanel" aria-label="Resume preview">
+    <div class="preview-panel-header">
+      <h2>Preview</h2>
+      <div class="preview-controls">
+        <div class="ats-score-mini" id="atsScoreMini">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span id="atsScoreValue">—</span>
+        </div>
+        <button class="btn btn-ghost btn-icon btn-sm" id="fullscreenPreviewBtn" aria-label="Fullscreen preview">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="preview-zoom">
+      <div class="preview-document" id="previewDocument">
+        <!-- Live preview rendered here -->
+        <div id="resumePreview"></div>
+      </div>
+    </div>
+
+    <!-- Styling Controls -->
+    <div class="style-panel">
+      <div class="style-section">
+        <label class="form-label">Color Theme</label>
+        <div class="color-swatches">
+          <button class="color-swatch active" style="--c:#6366f1" data-color="#6366f1" title="Indigo" aria-label="Indigo theme"></button>
+          <button class="color-swatch" style="--c:#8b5cf6" data-color="#8b5cf6" title="Violet" aria-label="Violet theme"></button>
+          <button class="color-swatch" style="--c:#ec4899" data-color="#ec4899" title="Pink" aria-label="Pink theme"></button>
+          <button class="color-swatch" style="--c:#10b981" data-color="#10b981" title="Emerald" aria-label="Emerald theme"></button>
+          <button class="color-swatch" style="--c:#f59e0b" data-color="#f59e0b" title="Amber" aria-label="Amber theme"></button>
+          <button class="color-swatch" style="--c:#3b82f6" data-color="#3b82f6" title="Blue" aria-label="Blue theme"></button>
+          <button class="color-swatch" style="--c:#0f172a" data-color="#0f172a" title="Dark" aria-label="Dark theme"></button>
+          <input type="color" id="customColorPicker" class="custom-color-pick" title="Custom color" aria-label="Custom color">
+        </div>
+      </div>
+      <div class="style-section">
+        <label class="form-label" for="fontSelector">Font</label>
+        <select id="fontSelector" class="form-select" style="font-size:0.8rem;height:32px">
+          <option value="Inter">Inter</option>
+          <option value="Merriweather">Merriweather</option>
+          <option value="Lato">Lato</option>
+          <option value="Roboto">Roboto</option>
+          <option value="Playfair Display">Playfair Display</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- AI PANEL (slides in) -->
+  <div class="ai-panel" id="aiPanel" aria-hidden="true">
+    <div class="ai-panel-header">
+      <div class="ai-panel-title">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <h3>AI Assistant</h3>
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleAIPanel()" aria-label="Close AI panel">×</button>
+    </div>
+    <div class="ai-panel-body">
+      <div class="ai-action-card" id="aiGenerateSummary">
+        <div class="ai-action-icon">✨</div>
+        <div>
+          <strong>Generate Summary</strong>
+          <p>Write a compelling professional summary based on your experience</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="aiGenerateSummary()">Generate</button>
+      </div>
+      <div class="ai-action-card" id="aiSuggestSkills">
+        <div class="ai-action-icon">🎯</div>
+        <div>
+          <strong>Suggest Skills</strong>
+          <p>Get relevant skill recommendations for your role</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="aiSuggestSkills()">Suggest</button>
+      </div>
+      <div class="ai-action-card" id="aiCheckATS">
+        <div class="ai-action-icon">📊</div>
+        <div>
+          <strong>Check ATS Score</strong>
+          <p>Analyze how well your resume performs with ATS systems</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="aiCheckATS()">Analyze</button>
+      </div>
+      <div class="ai-action-card" id="aiOptimize">
+        <div class="ai-action-icon">🚀</div>
+        <div>
+          <strong>Optimize Resume</strong>
+          <p>Get personalized suggestions to improve your resume</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="aiOptimize()">Optimize</button>
+      </div>
+
+      <div class="ai-results" id="aiResults" style="display:none">
+        <div class="ai-results-header">
+          <strong id="aiResultsTitle">Results</strong>
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('aiResults').style.display='none'">Clear</button>
+        </div>
+        <div id="aiResultsContent"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Template Switcher Modal -->
+<div class="modal-overlay hidden" id="templateModal" role="dialog" aria-modal="true" aria-labelledby="templateModalTitle">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="templateModalTitle">Choose Template</h2>
+      <button class="modal-close" onclick="closeTemplateModal()" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="template-gallery" id="templateGallery">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script src="js/theme.js?v=5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/api.js?v=5"></script>
+<script src="js/preview.js?v=5"></script>
+<script src="js/autosave.js?v=5"></script>
+<script src="js/builder.js?v=5"></script>
+<script>
+// Mobile preview/editor toggle
+let mobileShowingPreview = false;
+function toggleMobilePreview() {
+  const preview = document.querySelector('.preview-panel');
+  const editor = document.querySelector('.editor-panel');
+  const btn = document.getElementById('mobilePreviewToggle');
+  mobileShowingPreview = !mobileShowingPreview;
+  if (mobileShowingPreview) {
+    preview.style.display = 'flex';
+    editor.style.display = 'none';
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Editor';
+  } else {
+    preview.style.display = 'none';
+    editor.style.display = 'flex';
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Preview';
+  }
+}
+</script>
+</body>
+</html>

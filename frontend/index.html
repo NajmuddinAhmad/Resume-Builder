@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Build My Resume — Build AI-crafted resumes that land dream jobs. Professional templates, real-time preview, ATS optimization.">
+  <meta name="keywords" content="resume builder, AI resume, CV maker, ATS resume, professional resume">
+  <meta property="og:title" content="Build My Resume — AI-Powered Resume Builder">
+  <meta property="og:description" content="Land your dream job with AI-crafted resumes. Professional templates and real-time optimization.">
+  <title>Build My Resume — Land Your Dream Job with AI-Crafted Resumes</title>
+  <link rel="stylesheet" href="css/variables.css?v=3">
+  <link rel="stylesheet" href="css/base.css?v=3">
+  <link rel="stylesheet" href="css/components.css?v=3">
+  <link rel="stylesheet" href="css/landing.css?v=3">
+</head>
+<body>
+
+<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Build My Resume Home">
+        <span class="logo-icon">✦</span>
+        <span>Build My Resume</span>
+      </a>
+      <ul class="nav-links" role="list">
+        <button id="mobileMenuClose" class="mobile-close" aria-label="Close menu">&times;</button>
+        <li><a href="#features">Features</a></li>
+        <li><a href="templates.html">Templates</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li class="mobile-only"><a href="auth.html" id="mobileLoginBtn">Log in</a></li>
+        <li class="mobile-only" style="margin-top: 10px;"><a href="auth.html?tab=signup" id="mobileSignupBtn" class="btn btn-primary btn-sm">Get Started</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button id="themeToggle" class="btn btn-ghost btn-icon" aria-label="Toggle dark mode">
+          <svg class="icon-sun" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="auth.html" class="btn btn-ghost btn-sm" id="loginBtn">Log in</a>
+        <a href="auth.html?tab=signup" class="btn btn-primary btn-sm" id="signupBtn">Get Started →</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
+        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-bg-grid" aria-hidden="true"></div>
+  <div class="hero-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge fade-in">
+        <span class="badge-dot"></span>
+        <span>AI-Powered Resume Builder</span>
+      </div>
+      <h1 class="hero-headline fade-in">
+        Land your dream job with<br>
+        <span class="gradient-text">AI-crafted resumes.</span>
+      </h1>
+      <p class="hero-subtext fade-in">
+        Build a professional, tailored resume in minutes. Powered by AI intelligence to optimize your career story for modern ATS systems.
+      </p>
+      <div class="hero-actions fade-in">
+        <a href="auth.html?tab=signup" class="btn btn-primary btn-lg" id="heroCTA">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Build My Resume
+        </a>
+        <a href="templates.html" class="btn btn-secondary btn-lg">View Templates</a>
+      </div>
+      <div class="hero-stats fade-in">
+        <div class="stat-item"><strong>50K+</strong><span>Resumes Built</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat-item"><strong>94%</strong><span>Interview Rate</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat-item"><strong>5min</strong><span>To Build</span></div>
+      </div>
+    </div>
+
+    <!-- Hero Preview Card -->
+    <div class="hero-visual fade-in">
+      <div class="resume-preview-card">
+        <div class="preview-toolbar">
+          <div class="toolbar-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <div class="toolbar-title">Resume Builder — Manhattan</div>
+        </div>
+        <div class="preview-content">
+          <div class="preview-header-bar"></div>
+          <div class="preview-body">
+            <div class="preview-main">
+              <div class="preview-line wide"></div>
+              <div class="preview-line short"></div>
+              <div class="preview-section-block"></div>
+              <div class="preview-line medium"></div>
+              <div class="preview-line wide"></div>
+              <div class="preview-line short"></div>
+            </div>
+            <div class="preview-sidebar">
+              <div class="preview-line medium"></div>
+              <div class="preview-tag"></div>
+              <div class="preview-tag"></div>
+              <div class="preview-tag"></div>
+              <div class="preview-line short mt"></div>
+              <div class="preview-tag"></div>
+              <div class="preview-tag"></div>
+            </div>
+          </div>
+        </div>
+        <div class="ats-badge">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <div class="ats-label">ATS Score</div>
+            <div class="ats-score">95% Match</div>
+          </div>
+        </div>
+      </div>
+      <div class="floating-card card-ai">
+        <div class="floating-icon">✨</div>
+        <div>
+          <div class="floating-title">AI Writing</div>
+          <div class="floating-sub">Active</div>
+        </div>
+      </div>
+      <div class="floating-card card-templates">
+        <div class="floating-icon">📄</div>
+        <div>
+          <div class="floating-title">5 Templates</div>
+          <div class="floating-sub">Professional</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trusted by -->
+  <div class="trusted-section">
+    <p class="trusted-label">TRUSTED BY 100K+ PROFESSIONALS AT LEADING COMPANIES</p>
+    <div class="trusted-logos" aria-label="Companies our users work at">
+      <span>Google</span>
+      <span>Amazon</span>
+      <span>Meta</span>
+      <span>Netflix</span>
+      <span>Microsoft</span>
+      <span>Apple</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FEATURES ═══════════════════════ -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Everything you need to<br><span class="gradient-text">stand out in the pile.</span></h2>
+      <p>Our templates are designed by career experts and HR managers to maximize your chances of getting hired.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon" style="--icon-color: #6366f1">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>AI Writing Assistant</h3>
+        <p>Generate compelling bullet points, professional summaries, and skill suggestions powered by advanced AI.</p>
+        <ul class="feature-list">
+          <li>Smart content generation</li>
+          <li>Tone optimization</li>
+          <li>Action verb suggestions</li>
+        </ul>
+      </div>
+      <div class="feature-card fade-in" style="animation-delay: 0.1s">
+        <div class="feature-icon" style="--icon-color: #8b5cf6">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Real-Time Preview</h3>
+        <p>See your resume update live as you type with our split-screen editor. What you see is what you get.</p>
+        <ul class="feature-list">
+          <li>Split-screen editor</li>
+          <li>Instant template switching</li>
+          <li>Multiple device preview</li>
+        </ul>
+      </div>
+      <div class="feature-card fade-in" style="animation-delay: 0.2s">
+        <div class="feature-icon" style="--icon-color: #10b981">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h3>ATS-Friendly Export</h3>
+        <p>Our resumes are optimized for Applicant Tracking Systems with a guaranteed high compatibility score.</p>
+        <ul class="feature-list">
+          <li>ATS score analysis</li>
+          <li>Keyword optimization</li>
+          <li>PDF & DOCX export</li>
+        </ul>
+      </div>
+      <div class="feature-card fade-in" style="animation-delay: 0.3s">
+        <div class="feature-icon" style="--icon-color: #f59e0b">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h3>Premium Templates</h3>
+        <p>Choose from 5 professionally designed templates crafted for every industry and career stage.</p>
+        <ul class="feature-list">
+          <li>5 modern templates</li>
+          <li>Custom color themes</li>
+          <li>Font customization</li>
+        </ul>
+      </div>
+      <div class="feature-card fade-in" style="animation-delay: 0.4s">
+        <div class="feature-icon" style="--icon-color: #ef4444">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Share Anywhere</h3>
+        <p>Generate a unique shareable link for your resume and share it with recruiters instantly.</p>
+        <ul class="feature-list">
+          <li>Public share link</li>
+          <li>View tracking</li>
+          <li>Download tracking</li>
+        </ul>
+      </div>
+      <div class="feature-card fade-in" style="animation-delay: 0.5s">
+        <div class="feature-icon" style="--icon-color: #3b82f6">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Secure & Private</h3>
+        <p>Your data is encrypted and secure. Only you control who sees your resume with granular privacy controls.</p>
+        <ul class="feature-list">
+          <li>End-to-end encryption</li>
+          <li>Granular sharing controls</li>
+          <li>GDPR compliant</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ TEMPLATES SHOWCASE ═══════════════════════ -->
+<section class="templates-showcase" id="templates">
+  <div class="templates-bg" aria-hidden="true"></div>
+  <div class="container">
+    <div class="section-header light">
+      <h2>World-class templates.</h2>
+      <p>Each template is crafted with attention to detail, typography, and layout to reflect your professional status.</p>
+      <a href="templates.html" class="btn btn-secondary">Browse All Templates →</a>
+    </div>
+    <div class="template-cards">
+      <div class="template-preview-card featured">
+        <div class="template-preview-thumb live-preview" data-template="manhattan"></div>
+        <div class="template-preview-info">
+          <div class="badge badge-primary">Professional</div>
+          <span class="template-preview-name">The Manhattan</span>
+        </div>
+      </div>
+      <div class="template-preview-card">
+        <div class="template-preview-thumb live-preview" data-template="silicon"></div>
+        <div class="template-preview-info">
+          <div class="badge badge-muted">Modern</div>
+          <span class="template-preview-name">The Silicon</span>
+        </div>
+      </div>
+      <div class="template-preview-card">
+        <div class="template-preview-thumb live-preview" data-template="artisan"></div>
+        <div class="template-preview-info">
+          <div class="badge badge-warning">Creative</div>
+          <span class="template-preview-name">The Artisan</span>
+        </div>
+      </div>
+      <div class="template-preview-card">
+        <div class="template-preview-thumb live-preview" data-template="classic"></div>
+        <div class="template-preview-info">
+          <div class="badge badge-success">ATS-Optimized</div>
+          <span class="template-preview-name">The Classic</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ HOW IT WORKS ═══════════════════════ -->
+<section class="how-it-works" id="how">
+  <div class="container">
+    <div class="section-header">
+      <h2>From zero to hired<br><span class="gradient-text">in three steps.</span></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-item fade-in">
+        <div class="step-num">01</div>
+        <div class="step-icon">🎯</div>
+        <h3>Choose a Template</h3>
+        <p>Browse our curated collection of professional templates designed to impress recruiters.</p>
+      </div>
+      <div class="step-connector" aria-hidden="true">→</div>
+      <div class="step-item fade-in" style="animation-delay: 0.1s">
+        <div class="step-num">02</div>
+        <div class="step-icon">✨</div>
+        <h3>Add Your Content</h3>
+        <p>Fill in your details and let AI help craft the perfect descriptions and summaries.</p>
+      </div>
+      <div class="step-connector" aria-hidden="true">→</div>
+      <div class="step-item fade-in" style="animation-delay: 0.2s">
+        <div class="step-num">03</div>
+        <div class="step-icon">🚀</div>
+        <h3>Export & Apply</h3>
+        <p>Download as PDF or DOCX, share with a link, and start landing interviews.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CTA SECTION ═══════════════════════ -->
+<section class="cta-section" id="pricing">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-bg-orbs" aria-hidden="true">
+        <div class="cta-orb cta-orb-1"></div>
+        <div class="cta-orb cta-orb-2"></div>
+      </div>
+      <div class="cta-content">
+        <div class="cta-badge">🎉 Free to get started</div>
+        <h2>Ready to build your<br>future career?</h2>
+        <p>Join thousands of job seekers who have used Build My Resume to land their dream job at top companies.</p>
+        <a href="auth.html?tab=signup" class="btn btn-primary btn-lg">
+          Get Started for Free →
+        </a>
+        <p class="cta-hint">No credit card required</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <span class="logo-icon">✦</span>
+          <span>Build My Resume</span>
+        </a>
+        <p>AI-powered resume builder that helps professionals land their dream jobs.</p>
+        <p class="footer-copy">© 2024 Build My Resume. All rights reserved.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="templates.html">Templates</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">AI Tools</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Template</h4>
+        <ul>
+          <li><a href="templates.html">Manhattan</a></li>
+          <li><a href="templates.html">Silicon</a></li>
+          <li><a href="templates.html">Artisan</a></li>
+          <li><a href="templates.html">Horizon</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script src="js/theme.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/api.js?v=3"></script>
+<script src="js/preview.js?v=3"></script>
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+// Mobile menu
+const mobileBtn = document.getElementById('mobileMenuBtn');
+const navLinks = document.querySelector('.nav-links');
+
+function closeMobileMenu() {
+  if (navLinks.classList.contains('open')) {
+    navLinks.classList.remove('open');
+    mobileBtn.setAttribute('aria-expanded', 'false');
+    mobileBtn.setAttribute('aria-label', 'Open menu');
+    document.body.style.overflow = '';
+  }
+}
+
+function openMobileMenu() {
+  navLinks.classList.add('open');
+  mobileBtn.setAttribute('aria-expanded', 'true');
+  mobileBtn.setAttribute('aria-label', 'Close menu');
+  document.body.style.overflow = 'hidden';
+}
+
+mobileBtn.addEventListener('click', () => {
+  const expanded = mobileBtn.getAttribute('aria-expanded') === 'true';
+  if (expanded) closeMobileMenu();
+  else openMobileMenu();
+});
+
+const mobileClose = document.getElementById('mobileMenuClose');
+if (mobileClose) {
+  mobileClose.addEventListener('click', closeMobileMenu);
+}
+
+navLinks.addEventListener('click', (e) => {
+  if (e.target === navLinks) closeMobileMenu();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMobileMenu();
+});
+
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', closeMobileMenu);
+});
+
+// Intersection Observer for animations
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in, .feature-card, .step-item').forEach(el => observer.observe(el));
+
+// If logged in, redirect CTA to dashboard
+const token = localStorage.getItem('buildmyresume_token');
+if (token) {
+  document.getElementById('heroCTA').href = 'dashboard.html';
+  document.getElementById('loginBtn').textContent = 'Dashboard';
+  document.getElementById('loginBtn').href = 'dashboard.html';
+  document.getElementById('signupBtn').textContent = 'Dashboard →';
+  document.getElementById('signupBtn').href = 'dashboard.html';
+
+  const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+  if (mobileLoginBtn) {
+    mobileLoginBtn.textContent = 'Dashboard';
+    mobileLoginBtn.href = 'dashboard.html';
+  }
+  const mobileSignupBtn = document.getElementById('mobileSignupBtn');
+  if (mobileSignupBtn) {
+    mobileSignupBtn.parentElement.style.display = 'none';
+  }
+}
+
+// Render thumbs automatically
+document.addEventListener('DOMContentLoaded', () => {
+  const sampleData = {
+    personal: { fullName: 'Alexandra Chen', email: 'alex.chen@example.com', phone: '+1 (555) 123-4567', location: 'San Francisco, CA', linkedin: 'linkedin.com/in/alexchen', summary: 'Experienced Software Engineer with 6+ years building scalable web applications. Passionate about clean code and developer experience.' },
+    experience: [{ title: 'Senior Software Engineer', company: 'Stripe', location: 'San Francisco, CA', startDate: '2021-03', endDate: '', current: true, description: '• Led development of payment processing API serving 50M+ transactions/day\n• Reduced system latency by 40% through architectural improvements\n• Mentored team of 5 junior engineers' }],
+    education: [{ degree: 'B.S. Computer Science', school: 'UC Berkeley', field: 'Computer Science', startDate: '2014-09', endDate: '2018-05' }],
+    skills: { technical: ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'], soft: ['Leadership', 'Communication'] },
+    projects: [], certifications: [], languages: []
+  };
+
+  document.querySelectorAll('.live-preview').forEach(container => {
+    const templateId = container.dataset.template;
+    const rendered = renderPreviewHTML(sampleData, { primaryColor: '#6366f1', font: 'Inter' }, templateId);
+    
+    container.style.position = 'relative';
+    container.style.overflow = 'hidden';
+    container.style.padding = '0';
+    container.style.background = 'white';
+    
+    const inner = document.createElement('div');
+    inner.innerHTML = rendered;
+    inner.style.position = 'absolute';
+    inner.style.top = '0';
+    inner.style.left = '0';
+    inner.style.width = '800px';
+    inner.style.height = '1131px';
+    inner.style.transformOrigin = 'top left';
+    inner.style.pointerEvents = 'none';
+    
+    container.appendChild(inner);
+
+    const resize = () => {
+      const width = container.clientWidth || 100;
+      const scale = width / 800;
+      inner.style.transform = `scale(${scale})`;
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(container);
+    resize();
+  });
+});
+</script>
+</body>
+</html>

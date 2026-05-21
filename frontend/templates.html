@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse Build My Resume's professional resume templates. Choose from Manhattan, Silicon, Artisan, Horizon and Executive styles.">
+  <title>Templates — Build My Resume</title>
+  <link rel="stylesheet" href="css/variables.css?v=6">
+  <link rel="stylesheet" href="css/base.css?v=6">
+  <link rel="stylesheet" href="css/components.css?v=6">
+  <link rel="stylesheet" href="css/templates.css?v=6">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo"><span class="logo-icon">✦</span><span>Build My Resume</span></a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="templates.html" aria-current="page">Templates</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button id="themeToggle" class="btn btn-ghost btn-icon" aria-label="Toggle dark mode">
+          <svg class="icon-sun" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="auth.html" class="btn btn-ghost btn-sm" id="loginNavBtn">Log in</a>
+        <a href="auth.html?tab=signup" class="btn btn-primary btn-sm">Get Started →</a>
+      </div>
+      
+    </div>
+  </div>
+</nav>
+
+<main style="padding-top: var(--topbar-height)">
+  <!-- Header -->
+  <div class="templates-page-header">
+    <div class="container">
+      <div class="templates-header-content">
+        <h1>Resume <span class="gradient-text">Templates</span></h1>
+        <p>Professionally designed templates crafted to pass ATS systems and impress hiring managers.</p>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="template-filters" role="tablist" aria-label="Filter templates by category">
+        <button class="template-filter-btn active" data-filter="all" role="tab" aria-selected="true">All Templates</button>
+        <button class="template-filter-btn" data-filter="professional" role="tab">Professional</button>
+        <button class="template-filter-btn" data-filter="modern" role="tab">Modern</button>
+        <button class="template-filter-btn" data-filter="creative" role="tab">Creative</button>
+        <button class="template-filter-btn" data-filter="minimal" role="tab">Minimal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Templates Grid -->
+  <div class="container">
+    <div class="templates-main-grid" id="templatesGrid" role="list">
+
+      <!-- Manhattan -->
+      <article class="template-main-card" data-category="professional" role="listitem" aria-label="Manhattan template">
+        <div class="template-thumb-wrap">
+          <div class="template-thumb live-preview" data-template="manhattan"></div>
+          <div class="template-thumb-overlay">
+            <button class="btn btn-primary" onclick="useTemplate('manhattan')">Use This Template</button>
+            <button class="btn btn-secondary" onclick="previewTemplate('manhattan')">Preview →</button>
+          </div>
+        </div>
+        <div class="template-card-info">
+          <div class="template-card-badges">
+            <span class="badge badge-primary">Professional</span>
+            <span class="badge badge-success">Most Popular</span>
+          </div>
+          <h2>The Manhattan</h2>
+          <p>Classic two-column layout with a bold colored header. Perfect for corporate and professional roles.</p>
+          <div class="template-card-features">
+            <span>✓ Two-column layout</span>
+            <span>✓ Bold header</span>
+            <span>✓ ATS-optimized</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Silicon -->
+      <article class="template-main-card" data-category="modern" role="listitem" aria-label="Silicon template">
+        <div class="template-thumb-wrap">
+          <div class="template-thumb live-preview" data-template="silicon"></div>
+          <div class="template-thumb-overlay">
+            <button class="btn btn-primary" onclick="useTemplate('silicon')">Use This Template</button>
+            <button class="btn btn-secondary" onclick="previewTemplate('silicon')">Preview →</button>
+          </div>
+        </div>
+        <div class="template-card-info">
+          <div class="template-card-badges">
+            <span class="badge badge-muted">Modern</span>
+            <span class="badge badge-muted">Tech-Focused</span>
+          </div>
+          <h2>The Silicon</h2>
+          <p>Clean, minimal single-column design. Ideal for tech professionals and startups.</p>
+          <div class="template-card-features">
+            <span>✓ Single column</span>
+            <span>✓ Minimal design</span>
+            <span>✓ High readability</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Artisan -->
+      <article class="template-main-card" data-category="creative" role="listitem" aria-label="Artisan template">
+        <div class="template-thumb-wrap">
+          <div class="template-thumb live-preview" data-template="artisan"></div>
+          <div class="template-thumb-overlay">
+            <button class="btn btn-primary" onclick="useTemplate('artisan')">Use This Template</button>
+            <button class="btn btn-secondary" onclick="previewTemplate('artisan')">Preview →</button>
+          </div>
+        </div>
+        <div class="template-card-info">
+          <div class="template-card-badges">
+            <span class="badge badge-warning">Creative</span>
+          </div>
+          <h2>The Artisan</h2>
+          <p>Creative sidebar design with a bold colored panel. Stand out with this unique layout.</p>
+          <div class="template-card-features">
+            <span>✓ Sidebar accent</span>
+            <span>✓ Creative layout</span>
+            <span>✓ Skills visualization</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Horizon -->
+      <article class="template-main-card" data-category="modern" role="listitem" aria-label="Horizon template">
+        <div class="template-thumb-wrap">
+          <div class="template-thumb live-preview" data-template="horizon"></div>
+          <div class="template-thumb-overlay">
+            <button class="btn btn-primary" onclick="useTemplate('horizon')">Use This Template</button>
+            <button class="btn btn-secondary" onclick="previewTemplate('horizon')">Preview →</button>
+          </div>
+        </div>
+        <div class="template-card-info">
+          <div class="template-card-badges">
+            <span class="badge badge-muted">Modern</span>
+          </div>
+          <h2>The Horizon</h2>
+          <p>Spacious layout with a gradient header. A fresh modern take on the classic resume.</p>
+          <div class="template-card-features">
+            <span>✓ Gradient header</span>
+            <span>✓ Spacious layout</span>
+            <span>✓ Modern feel</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Executive -->
+      <article class="template-main-card" data-category="professional" role="listitem" aria-label="Executive template">
+        <div class="template-thumb-wrap">
+          <div class="template-thumb live-preview" data-template="executive"></div>
+          <div class="template-thumb-overlay">
+            <button class="btn btn-primary" onclick="useTemplate('executive')">Use This Template</button>
+            <button class="btn btn-secondary" onclick="previewTemplate('executive')">Preview →</button>
+          </div>
+        </div>
+        <div class="template-card-info">
+          <div class="template-card-badges">
+            <span class="badge badge-primary">Professional</span>
+          </div>
+          <h2>The Executive</h2>
+          <p>Dark sidebar with high contrast. Excellent for senior roles and leadership positions.</p>
+          <div class="template-card-features">
+            <span>✓ Dark theme</span>
+            <span>✓ High contrast</span>
+            <span>✓ Executive focus</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Classic -->
+      <article class="template-main-card" data-category="professional" role="listitem" aria-label="Classic template">
+        <div class="template-thumb-wrap">
+          <div class="template-thumb live-preview" data-template="classic"></div>
+          <div class="template-thumb-overlay">
+            <button class="btn btn-primary" onclick="useTemplate('classic')">Use This Template</button>
+            <button class="btn btn-secondary" onclick="previewTemplate('classic')">Preview →</button>
+          </div>
+        </div>
+        <div class="template-card-info">
+          <div class="template-card-badges">
+            <span class="badge badge-primary">Professional</span>
+            <span class="badge badge-success">ATS Optimized</span>
+          </div>
+          <h2>The Classic</h2>
+          <p>A traditional, clean, and highly ATS-optimized single column layout. Perfect for engineering and academic roles.</p>
+          <div class="template-card-features">
+            <span>✓ Single column</span>
+            <span>✓ ATS Optimized</span>
+            <span>✓ Standard layout</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</main>
+
+<!-- Preview Modal -->
+<div class="modal-overlay hidden" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewModalTitle">
+  <div class="modal" style="max-width:720px">
+    <div class="modal-header">
+      <h2 class="modal-title" id="previewModalTitle">Template Preview</h2>
+      <button class="modal-close" onclick="closePreviewModal()" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body" id="previewModalBody" style="padding:0;background:#f8fafc;min-height:400px">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closePreviewModal()">Close</button>
+      <button class="btn btn-primary" id="previewUseBtn">Use This Template →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script src="js/theme.js?v=5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/api.js?v=5"></script>
+<script src="js/preview.js?v=5"></script>
+<script>
+// Category filter
+document.querySelectorAll('.template-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.template-filter-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.template-main-card').forEach(card => {
+      card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+    });
+  });
+});
+
+let currentPreviewTemplate = null;
+
+async function useTemplate(id) {
+  const loggedIn = await Auth.isLoggedIn();
+  if (!loggedIn) {
+    // Guest mode: store template in sessionStorage (survives redirect), then open builder
+    sessionStorage.setItem('pending_template', id);
+    window.location.href = `builder.html?template=${id}`;
+    return;
+  }
+  // Logged-in: try to create DB record, fall back to guest mode if it fails
+  try {
+    const data = await API.resumes.create({ 
+      title: `${id.charAt(0).toUpperCase() + id.slice(1)} Resume`, 
+      template_id: id 
+    });
+    window.location.href = `builder.html?id=${data.resume.id}`;
+  } catch (err) {
+    console.warn('Could not save to DB, opening in guest mode:', err.message);
+    sessionStorage.setItem('pending_template', id);
+    window.location.href = `builder.html?template=${id}`;
+  }
+}
+
+function previewTemplate(id) {
+  currentPreviewTemplate = id;
+  const sampleData = {
+    personal: {
+      fullName: 'Alexandra Chen',
+      email: 'alex.chen@example.com',
+      phone: '+1 (555) 123-4567',
+      location: 'San Francisco, CA',
+      linkedin: 'linkedin.com/in/alexchen',
+      summary: 'Experienced Software Engineer with 6+ years building scalable web applications. Passionate about clean code and developer experience.'
+    },
+    experience: [{
+      title: 'Senior Software Engineer',
+      company: 'Stripe',
+      location: 'San Francisco, CA',
+      startDate: '2021-03',
+      endDate: '',
+      current: true,
+      description: '• Led development of payment processing API serving 50M+ transactions/day\n• Reduced system latency by 40% through architectural improvements\n• Mentored team of 5 junior engineers'
+    }],
+    education: [{ degree: 'B.S. Computer Science', school: 'UC Berkeley', field: 'Computer Science', startDate: '2014-09', endDate: '2018-05' }],
+    skills: { technical: ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'], soft: ['Leadership', 'Communication'] },
+    projects: [],
+    certifications: [],
+    languages: []
+  };
+
+  const body = document.getElementById('previewModalBody');
+  body.innerHTML = `<div style="padding:20px;background:#f8fafc">${renderPreviewHTML(sampleData, { primaryColor: '#6366f1', font: 'Inter' }, id)}</div>`;
+  document.getElementById('previewModalTitle').textContent = `${id.charAt(0).toUpperCase() + id.slice(1)} Template`;
+  document.getElementById('previewUseBtn').onclick = () => useTemplate(id);
+  document.getElementById('previewModal').classList.remove('hidden');
+}
+
+// Render thumbs automatically
+document.addEventListener('DOMContentLoaded', () => {
+  const sampleData = {
+    personal: { fullName: 'Alexandra Chen', email: 'alex.chen@example.com', phone: '+1 (555) 123-4567', location: 'San Francisco, CA', linkedin: 'linkedin.com/in/alexchen', summary: 'Experienced Software Engineer with 6+ years building scalable web applications. Passionate about clean code and developer experience.' },
+    experience: [{ title: 'Senior Software Engineer', company: 'Stripe', location: 'San Francisco, CA', startDate: '2021-03', endDate: '', current: true, description: '• Led development of payment processing API serving 50M+ transactions/day\n• Reduced system latency by 40% through architectural improvements\n• Mentored team of 5 junior engineers' }],
+    education: [{ degree: 'B.S. Computer Science', school: 'UC Berkeley', field: 'Computer Science', startDate: '2014-09', endDate: '2018-05' }],
+    skills: { technical: ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'Redis', 'AWS'], soft: ['Leadership', 'Communication'] },
+    projects: [], certifications: [], languages: []
+  };
+
+  document.querySelectorAll('.live-preview').forEach(container => {
+    const templateId = container.dataset.template;
+    const rendered = renderPreviewHTML(sampleData, { primaryColor: '#6366f1', font: 'Inter' }, templateId);
+    
+    // Create scaling container
+    container.style.position = 'relative';
+    container.style.overflow = 'hidden';
+    container.style.padding = '0';
+    container.style.background = 'white';
+    
+    const inner = document.createElement('div');
+    inner.innerHTML = rendered;
+    inner.style.position = 'absolute';
+    inner.style.top = '0';
+    inner.style.left = '0';
+    inner.style.width = '800px';
+    inner.style.height = '1131px';
+    inner.style.transformOrigin = 'top left';
+    inner.style.pointerEvents = 'none';
+    
+    container.appendChild(inner);
+
+    const resize = () => {
+      const scale = container.clientWidth / 800;
+      inner.style.transform = `scale(${scale})`;
+    };
+    window.addEventListener('resize', resize);
+    resize();
+  });
+});
+
+function renderPreviewHTML(sections, styling, templateId) {
+  const renderers = { manhattan: renderManhattan, silicon: renderSilicon, artisan: renderArtisan, horizon: renderHorizon, executive: renderExecutive };
+  return (renderers[templateId] || renderManhattan)(sections, styling);
+}
+
+function closePreviewModal() {
+  document.getElementById('previewModal').classList.add('hidden');
+}
+
+// If logged in update nav
+Auth.isLoggedIn().then(loggedIn => {
+  if (loggedIn) {
+    const loginBtn = document.getElementById('loginNavBtn');
+    if (loginBtn) { loginBtn.textContent = 'Dashboard'; loginBtn.href = 'dashboard.html'; }
+  }
+});
+</script>
+<script>
+// Navbar scroll effect for templates page
+document.addEventListener('DOMContentLoaded', () => {
+  const navbar = document.getElementById('navbar');
+  if (navbar) {
+    const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+});
+</script>
+</body>
+</html>

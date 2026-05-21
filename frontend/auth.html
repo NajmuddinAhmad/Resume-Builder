@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in or create your Build My Resume account to start building professional AI-powered resumes.">
+  <title>Build My Resume — Sign In / Create Account</title>
+  <link rel="stylesheet" href="css/variables.css?v=3">
+  <link rel="stylesheet" href="css/base.css?v=3">
+  <link rel="stylesheet" href="css/components.css?v=3">
+  <link rel="stylesheet" href="css/auth.css?v=3">
+</head>
+<body class="auth-body">
+
+<!-- Background -->
+<div class="auth-bg" aria-hidden="true">
+  <div class="auth-orb auth-orb-1"></div>
+  <div class="auth-orb auth-orb-2"></div>
+  <div class="auth-grid"></div>
+</div>
+
+<!-- Auth Container -->
+<div class="auth-layout">
+  <!-- Left Panel — Branding -->
+  <aside class="auth-brand" aria-label="Build My Resume features">
+    <a href="index.html" class="auth-logo">
+      <span class="logo-icon">✦</span>
+      <span>Build My Resume</span>
+    </a>
+    <div class="auth-brand-content">
+      <h2>Build resumes that<br><span class="gradient-text">get you hired.</span></h2>
+      <ul class="auth-features" role="list">
+        <li>
+          <span class="auth-feature-icon">✨</span>
+          <div>
+            <strong>AI-Powered Writing</strong>
+            <span>Generate professional summaries and bullet points instantly</span>
+          </div>
+        </li>
+        <li>
+          <span class="auth-feature-icon">🎯</span>
+          <div>
+            <strong>ATS Optimization</strong>
+            <span>Score your resume and optimize for applicant tracking systems</span>
+          </div>
+        </li>
+        <li>
+          <span class="auth-feature-icon">🚀</span>
+          <div>
+            <strong>5 Premium Templates</strong>
+            <span>Professional designs trusted by top industry recruiters</span>
+          </div>
+        </li>
+        <li>
+          <span class="auth-feature-icon">📊</span>
+          <div>
+            <strong>Resume Analytics</strong>
+            <span>Track views, downloads, and engagement on your resumes</span>
+          </div>
+        </li>
+      </ul>
+      <div class="auth-testimonial">
+        <div class="testimonial-avatar">
+          <div class="avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">S</div>
+        </div>
+        <div class="testimonial-text">
+          <p>"Got 3 interview calls within a week of using Build My Resume. The ATS optimization made all the difference."</p>
+          <strong>Sarah M. — Software Engineer at Google</strong>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Panel — Forms -->
+  <main class="auth-panel" id="authMain">
+    <!-- Tab Navigation -->
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" id="loginTab" role="tab" aria-selected="true" aria-controls="loginPanel">
+        Sign In
+      </button>
+      <button class="auth-tab" id="signupTab" role="tab" aria-selected="false" aria-controls="signupPanel">
+        Create Account
+      </button>
+    </div>
+
+    <!-- ─── LOGIN PANEL ─── -->
+    <div class="auth-form-panel active" id="loginPanel" role="tabpanel">
+      <div class="auth-form-header">
+        <h1>Welcome back!</h1>
+        <p>Sign in to access your resumes and continue building.</p>
+      </div>
+      <form id="loginForm" class="auth-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email address <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <input type="email" id="loginEmail" name="email" class="form-input with-icon" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="label-row">
+            <label class="form-label" for="loginPassword">Password <span class="required">*</span></label>
+            <button type="button" class="forgot-link" id="forgotBtn">Forgot password?</button>
+          </div>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="loginPassword" name="password" class="form-input with-icon" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="password-toggle" data-target="loginPassword" aria-label="Toggle password visibility">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="loginError" class="auth-error hidden"></div>
+        <button type="submit" class="btn btn-primary w-full btn-lg" id="loginSubmit">
+          <span class="btn-text">Sign In</span>
+          <div class="spinner hidden"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- ─── SIGNUP PANEL ─── -->
+    <div class="auth-form-panel" id="signupPanel" role="tabpanel">
+      <div class="auth-form-header">
+        <h1>Create your account</h1>
+        <p>Join thousands of professionals building smarter resumes.</p>
+      </div>
+      <form id="signupForm" class="auth-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="signupName">Full Name <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="signupName" name="name" class="form-input with-icon" placeholder="John Doe" autocomplete="name" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signupEmail">Email address <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <input type="email" id="signupEmail" name="email" class="form-input with-icon" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signupPassword">Password <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="signupPassword" name="password" class="form-input with-icon" placeholder="Min. 6 characters" autocomplete="new-password" required minlength="6">
+            <button type="button" class="password-toggle" data-target="signupPassword" aria-label="Toggle password visibility">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar" id="strengthBar">
+              <div class="strength-fill" id="strengthFill"></div>
+            </div>
+            <span class="strength-label" id="strengthLabel">Enter a password</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-check">
+            <input type="checkbox" id="agreeTerms" required>
+            <span class="checkmark"></span>
+            <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></span>
+          </label>
+        </div>
+        <div id="signupError" class="auth-error hidden"></div>
+        <button type="submit" class="btn btn-primary w-full btn-lg" id="signupSubmit">
+          <span class="btn-text">Create Account →</span>
+          <div class="spinner hidden"></div>
+        </button>
+        <div class="auth-help" id="signupHelp" style="display:none; margin-top: 14px;">
+          <p style="margin: 0 0 10px; color: var(--muted);">Didn’t get the verification email?</p>
+          <button type="button" class="btn btn-secondary w-full btn-sm" id="resendVerificationBtn">Resend verification email</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ─── FORGOT PASSWORD PANEL ─── -->
+    <div class="auth-form-panel" id="forgotPanel" role="tabpanel">
+      <div class="auth-form-header">
+        <button type="button" class="back-btn" id="backToLogin">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Sign In
+        </button>
+        <h1>Reset Password</h1>
+        <p>Enter your email and we'll send you a reset link.</p>
+      </div>
+      <form id="forgotForm" class="auth-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="forgotEmail">Email address <span class="required">*</span></label>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <input type="email" id="forgotEmail" name="email" class="form-input with-icon" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div id="forgotMessage" class="auth-success hidden"></div>
+        <div id="forgotError" class="auth-error hidden"></div>
+        <button type="submit" class="btn btn-primary w-full btn-lg" id="forgotSubmit">
+          <span class="btn-text">Send Reset Link</span>
+          <div class="spinner hidden"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button id="authThemeToggle" class="auth-theme-toggle" aria-label="Toggle dark mode">
+      <svg class="icon-sun" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </main>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+<script src="js/theme.js?v=3"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/api.js?v=3"></script>
+<script src="js/auth.js?v=3"></script>
+</body>
+</html>
