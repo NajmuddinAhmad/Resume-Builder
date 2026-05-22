@@ -92,9 +92,11 @@ app.get('*', (req, res) => {
 // Error handler (must be last)
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 Resume Builder API running on port ${PORT}`);
-  console.log(`📍 Health: http://localhost:${PORT}/api/health\n`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Resume Builder API running on port ${PORT}`);
+    console.log(`📍 Health: http://localhost:${PORT}/api/health\n`);
+  });
+}
 
 module.exports = app;
