@@ -898,77 +898,74 @@ function initEventListeners(resumeId) {
 
   // Export PDF
   document.getElementById('exportPDFBtn')?.addEventListener('click', async () => {
-    showToast('Generating PDF locally...', 'info', 2000);
-    
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
     }
 
-    const element = document.getElementById('resumePreview');
-    if (!element) return;
+    if (!(await Auth.isLoggedIn())) {
+      forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
+      window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
+      return;
+    }
     
-    const opt = {
-      margin:       0,
-      filename:     `${document.getElementById('resumeTitle').value || 'Resume'}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
-      jsPDF:        { unit: 'px', format: [element.offsetWidth, element.offsetHeight], orientation: 'portrait' }
-    };
-    
-    html2pdf().set(opt).from(element).save().then(() => {
-      showToast('PDF generated successfully!', 'success', 3000);
-    }).catch(err => {
-      console.error(err);
-      showToast('Failed to generate PDF.', 'error', 3000);
-    });
+    if (resumeId) {
+      showToast('Generating PDF...', 'info');
+      try {
+        const url = await API.resumes.exportPDF(resumeId);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Server error generating PDF');
+        
+        const blob = await response.blob();
+        let filename = `${(document.getElementById('resumeTitle').value || 'resume').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition && contentDisposition.includes('filename="')) {
+          filename = contentDisposition.split('filename="')[1].split('"')[0];
+        }
+
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(downloadUrl);
+        showToast('PDF downloaded successfully!', 'success');
+      } catch (err) {
+        console.error('Fetch PDF error', err);
+        showToast('Failed to download PDF. Try again.', 'error');
+      }
+    }
   });
 
   // Export DOCX (or .doc fallback)
   document.getElementById('exportDOCXBtn')?.addEventListener('click', async (e) => {
-    showToast('Generating DOCX snapshot...', 'info', 2000);
+    showToast('Preparing DOCX download...', 'info', 2000);
 
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
     }
 
-    const element = document.getElementById('resumePreview');
-    if (!element) return;
-    
-    try {
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
-      const base64image = canvas.toDataURL('image/jpeg', 0.9);
-      
-      const response = await fetch(`${API_BASE}/resumes/export/docx-image`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          image: base64image,
-          title: document.getElementById('resumeTitle').value || 'Resume'
-        })
-      });
-      
-      if (!response.ok) throw new Error('Failed to generate DOCX');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${document.getElementById('resumeTitle').value || 'Resume'}.docx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-      
-      showToast('DOCX generated successfully!', 'success', 3000);
-    } catch (err) {
-      console.error(err);
-      showToast('Failed to generate DOCX.', 'error', 3000);
+    const token = Auth.getCachedToken?.();
+    if (resumeId && token) {
+      const downloadUrl = `${API_BASE}/resumes/${resumeId}/export/docx?token=${encodeURIComponent(token)}`;
+      window.location.href = downloadUrl;
+      return;
     }
+
+    if (!(await Auth.isLoggedIn())) {
+      forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
+      window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
+      return;
+    }
+    
+    showToast('Failed to verify session for download', 'error');
   });
 
   // Print
   document.getElementById('printBtn')?.addEventListener('click', async () => {
-    showToast('Preparing print...', 'info', 2000);
+    const preview = document.getElementById('resumePreview');
+    if (!preview) return;
 
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
@@ -980,28 +977,33 @@ function initEventListeners(resumeId) {
       return;
     }
     
-    const preview = document.getElementById('resumePreview');
-    if (!preview) return;
+    // Use in-page print to avoid popup blockers
+    const printContainer = document.createElement('div');
+    printContainer.id = 'print-container';
+    printContainer.innerHTML = preview.innerHTML;
     
-    let printIframe = document.getElementById('print-iframe');
-    if (!printIframe) {
-      printIframe = document.createElement('iframe');
-      printIframe.id = 'print-iframe';
-      printIframe.style.display = 'none';
-      document.body.appendChild(printIframe);
-    }
+    const printStyle = document.createElement('style');
+    printStyle.id = 'print-style';
+    printStyle.textContent = `
+      @media print {
+        body > *:not(#print-container) { display: none !important; }
+        #print-container { display: block !important; position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      }
+      #print-container { display: none; }
+    `;
     
-    const doc = printIframe.contentWindow.document;
-    doc.open();
-    doc.write(`<html><head><title>${document.getElementById('resumeTitle').value}</title>
-      <style>body{margin:0;padding:0}@media print{*{-webkit-print-color-adjust:exact}}</style>
-      </head><body>${preview.innerHTML}</body></html>`);
-    doc.close();
+    document.body.appendChild(printContainer);
+    document.head.appendChild(printStyle);
     
     setTimeout(() => {
-      printIframe.contentWindow.focus();
-      printIframe.contentWindow.print();
-    }, 250);
+      window.print();
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(printContainer);
+        document.head.removeChild(printStyle);
+      }, 500);
+    }, 100);
   });
 
   // Share

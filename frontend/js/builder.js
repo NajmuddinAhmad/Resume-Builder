@@ -1001,7 +1001,34 @@ function initEventListeners(resumeId) {
       window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
       return;
     }
-    if (resumeId) window.open(await API.resumes.exportPDF(resumeId), '_blank');
+    if (resumeId) {
+      showToast('Generating PDF...', 'info');
+      try {
+        const url = await API.resumes.exportPDF(resumeId);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Server error generating PDF');
+        
+        const blob = await response.blob();
+        let filename = `${(document.getElementById('resumeTitle').value || 'resume').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition && contentDisposition.includes('filename="')) {
+          filename = contentDisposition.split('filename="')[1].split('"')[0];
+        }
+
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(downloadUrl);
+        showToast('PDF downloaded successfully!', 'success');
+      } catch (err) {
+        console.error('Fetch PDF error', err);
+        showToast('Failed to download PDF. Try again.', 'error');
+      }
+    }
   });
 
   // Export DOCX (or .doc fallback)
@@ -1059,19 +1086,12 @@ function initEventListeners(resumeId) {
   });
 
   // Print
+  // Print
   document.getElementById('printBtn')?.addEventListener('click', async () => {
     const preview = document.getElementById('resumePreview');
     if (!preview) return;
     
-    // Open window synchronously to avoid popup blocker
-    const w = window.open('', '_blank');
-    if (!w) {
-      showToast('Popup blocked. Please allow popups to print.', 'error');
-      return;
-    }
-    
     if (!(await Auth.isLoggedIn())) {
-      w.close();
       if (typeof forceSave === 'function') {
         forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
       }
@@ -1079,15 +1099,33 @@ function initEventListeners(resumeId) {
       return;
     }
     
-    w.document.write(`<html><head><title>${document.getElementById('resumeTitle').value}</title>
-      <style>body{margin:0;padding:0}@media print{*{-webkit-print-color-adjust:exact}}</style>
-      </head><body>${preview.innerHTML}</body></html>`);
-    w.document.close();
-    w.focus();
+    // Use in-page print to avoid popup blockers
+    const printContainer = document.createElement('div');
+    printContainer.id = 'print-container';
+    printContainer.innerHTML = preview.innerHTML;
+    
+    const printStyle = document.createElement('style');
+    printStyle.id = 'print-style';
+    printStyle.textContent = `
+      @media print {
+        body > *:not(#print-container) { display: none !important; }
+        #print-container { display: block !important; position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      }
+      #print-container { display: none; }
+    `;
+    
+    document.body.appendChild(printContainer);
+    document.head.appendChild(printStyle);
+    
     setTimeout(() => {
-      w.print();
-      w.close();
-    }, 500);
+      window.print();
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(printContainer);
+        document.head.removeChild(printStyle);
+      }, 500);
+    }, 100);
   });
 
   // Share
