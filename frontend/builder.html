@@ -4,15 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resume Builder — Build My Resume</title>
-  <link rel="stylesheet" href="css/variables.css?v=1779450662">
-  <link rel="stylesheet" href="css/base.css?v=1779450662">
-  <link rel="stylesheet" href="css/components.css?v=1779450662">
-  <link rel="stylesheet" href="css/builder.css?v=1779450662">
+  <link rel="stylesheet" href="css/variables.css?v=6">
+  <link rel="stylesheet" href="css/base.css?v=6">
+  <link rel="stylesheet" href="css/components.css?v=6">
+  <link rel="stylesheet" href="css/builder.css?v=6">
   <!-- SortableJS for drag-and-drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-  <!-- PDF and DOCX frontend rendering -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="builder-body">
 
@@ -38,11 +35,6 @@
     </div>
   </div>
   <div class="builder-topbar-right">
-    <!-- Mobile preview toggle — only visible on small screens -->
-    <button id="mobilePreviewToggle" class="btn btn-outline btn-sm mobile-only" onclick="toggleMobilePreview()" aria-label="Toggle preview">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      Preview
-    </button>
     <button id="builderThemeToggle" class="btn btn-ghost btn-icon btn-sm" aria-label="Toggle dark mode">
       <svg class="icon-sun" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="icon-moon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -228,31 +220,49 @@
 </div>
 
 <div class="toast-container" id="toastContainer" aria-live="polite"></div>
-
-<script src="js/theme.js?v=1779450662"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="js/theme.js?v=5"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/api.js?v=1779450662"></script>
-<script src="js/preview.js?v=1779450662"></script>
-<script src="js/autosave.js?v=1779450662"></script>
-<script src="js/builder.v2.js?v=1779450662"></script>
+  <!-- Mobile Bottom Navigation -->
+  <div class="mobile-bottom-nav mobile-only">
+    <button class="mobile-nav-btn active" onclick="switchMobileTab('editor')" id="navEditorBtn">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Editor</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="switchMobileTab('preview')" id="navPreviewBtn">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span>Preview</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="toggleAIPanel()" id="navAIBtn">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>AI Tools</span>
+    </button>
+  </div>
+
+<script src="js/api.js?v=6"></script>
+<script src="js/preview.js?v=6"></script>
+<script src="js/autosave.js?v=6"></script>
+<script src="js/builder.js?v=7"></script>
 <script>
-// Mobile preview/editor toggle
-let mobileShowingPreview = false;
-function toggleMobilePreview() {
+// Mobile tabs toggle
+function switchMobileTab(tab) {
   const preview = document.querySelector('.preview-panel');
   const editor = document.querySelector('.editor-panel');
-  const btn = document.getElementById('mobilePreviewToggle');
-  mobileShowingPreview = !mobileShowingPreview;
-  if (mobileShowingPreview) {
+  
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  
+  if (tab === 'preview') {
     preview.style.display = 'flex';
     editor.style.display = 'none';
-    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Editor';
-  } else {
+    document.getElementById('navPreviewBtn').classList.add('active');
+  } else if (tab === 'editor') {
     preview.style.display = 'none';
     editor.style.display = 'flex';
-    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Preview';
+    document.getElementById('navEditorBtn').classList.add('active');
   }
 }
+
 </script>
 </body>
 </html>

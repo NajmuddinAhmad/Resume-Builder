@@ -611,7 +611,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: calc(100vh - var(--topbar-height));
+    height: calc(100vh - var(--topbar-height) - 60px - env(safe-area-inset-bottom));
   }
   .sections-panel { display: none; }
   .editor-panel {
@@ -622,12 +622,14 @@
     flex-direction: column;
   }
   .preview-panel {
-    display: none; /* hidden by default; toggled by mobilePreviewToggle */
+    display: none; /* hidden by default; toggled by mobile nav */
     flex: 1;
     overflow: hidden;
+    padding-bottom: 20px;
   }
   .editor-scroll {
     padding: var(--space-3);
+    padding-bottom: 80px;
   }
 
   /* Form rows: single column on mobile */
@@ -636,6 +638,12 @@
   }
   .form-row.three-col {
     grid-template-columns: 1fr !important;
+  }
+  
+  /* Increase input tap targets */
+  .form-group input, .form-group textarea, .form-group select {
+    font-size: 16px; /* Prevents iOS auto-zoom */
+    padding: 12px;
   }
 
   /* Section form cards: make header tap-friendly */
@@ -677,3 +685,66 @@
   }
   .form-group label { font-size: var(--text-xs); }
 }
+
+/* ── Mobile Bottom Navigation ── */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: var(--z-sticky);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mobile-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.mobile-nav-btn svg { stroke-width: 1.5; }
+.mobile-nav-btn span { font-size: 10px; font-weight: 600; }
+.mobile-nav-btn.active { color: var(--primary); }
+.mobile-nav-btn.active svg { stroke-width: 2.5; }
+
+/* ── ATS Score Enhancements ── */
+.ats-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--surface-3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: var(--space-2) 0;
+}
+.ats-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 1s ease-in-out;
+}
+.ats-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+.ats-tag.found { background: var(--success-light); color: var(--success); }
+.ats-tag.missing { background: var(--danger-light); color: var(--danger); }
+.ats-tag.strength { background: var(--primary-xlight); color: var(--primary); }
+.ats-tag.improvement { background: var(--warning-light); color: var(--warning); }
