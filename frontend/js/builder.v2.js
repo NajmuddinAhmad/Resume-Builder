@@ -898,45 +898,72 @@ function initEventListeners(resumeId) {
 
   // Export PDF
   document.getElementById('exportPDFBtn')?.addEventListener('click', async () => {
-    showToast('Preparing PDF download...', 'info', 2000);
-
+    showToast('Generating PDF locally...', 'info', 2000);
+    
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
     }
 
-    if (!(await Auth.isLoggedIn())) {
-      forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
-      window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
-      return;
-    }
+    const element = document.getElementById('resumePreview');
+    if (!element) return;
     
-    if (resumeId) {
-      window.location.href = await API.resumes.exportPDF(resumeId);
-    }
+    const opt = {
+      margin:       0,
+      filename:     `${document.getElementById('resumeTitle').value || 'Resume'}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, logging: false },
+      jsPDF:        { unit: 'px', format: [element.offsetWidth, element.offsetHeight], orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save().then(() => {
+      showToast('PDF generated successfully!', 'success', 3000);
+    }).catch(err => {
+      console.error(err);
+      showToast('Failed to generate PDF.', 'error', 3000);
+    });
   });
 
   // Export DOCX (or .doc fallback)
   document.getElementById('exportDOCXBtn')?.addEventListener('click', async (e) => {
-    showToast('Preparing DOCX download...', 'info', 2000);
+    showToast('Generating DOCX snapshot...', 'info', 2000);
 
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
     }
 
-    const token = Auth.getCachedToken?.();
-    if (resumeId && token) {
-      const downloadUrl = `${API_BASE}/resumes/${resumeId}/export/docx?token=${encodeURIComponent(token)}`;
-      window.location.href = downloadUrl;
-      return;
-    }
-
-    if (!(await Auth.isLoggedIn())) {
-      forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
-      window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
-      return;
-    }
+    const element = document.getElementById('resumePreview');
+    if (!element) return;
     
-    showToast('Failed to verify session for download', 'error');
+    try {
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
+      const base64image = canvas.toDataURL('image/jpeg', 0.9);
+      
+      const response = await fetch(`${API_BASE}/resumes/export/docx-image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          image: base64image,
+          title: document.getElementById('resumeTitle').value || 'Resume'
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to generate DOCX');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${document.getElementById('resumeTitle').value || 'Resume'}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      
+      showToast('DOCX generated successfully!', 'success', 3000);
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to generate DOCX.', 'error', 3000);
+    }
   });
 
   // Print
