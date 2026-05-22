@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { body, query, validationResult } = require('express-validator');
 const db = require('../config/db');
 const { authenticate, optionalAuth } = require('../middleware/auth');
+const pdfService = require('../services/pdfService');
 const { createClient } = require('@supabase/supabase-js');
 let htmlDocx = null;
 try {
@@ -233,15 +234,139 @@ router.post('/:id/duplicate', authenticate, async (req, res, next) => {
 });
 
 /**
- * Legacy PDF/DOCX Routes (Disabled to bypass Vercel limits)
- * Generation is now handled entirely on the frontend via html2pdf.js and html2canvas.
+ * GET /api/resumes/:id/export/pdf
  */
-router.get('/:id/export/pdf', authenticate, async (req, res) => {
-  res.status(501).json({ error: 'PDF generation is now handled on the frontend client-side.' });
+router.get('/:id/export/pdf', authenticate, async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.query.token;
+    if (!token) {
+      return res.status(401).json({ error: 'No token, authorization denied' });
+    }
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL || 'https://aihmhvlhthfodikgzfsn.supabase.co',
+      process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaG1odmxodGhmb2Rpa2d6ZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjY4NDAsImV4cCI6MjA5NDg0Mjg0MH0.AEgff0NpZLHr_B2MHx6sFB9V2wNcpLURBveOrMCm2to',
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      }
+    );
+
+    const { data: resume, error } = await supabase
+      .from('resumes')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+
+    if (error || !resume) {
+      return res.status(404).json({ error: 'Resume not found' });
+    }
+
+    const pdfBuffer = await pdfService.generatePDF(resume);
+
+    await supabase
+      .from('resumes')
+      .update({ downloads: (resume.downloads || 0) + 1 })
+      .eq('id', req.params.id);
+
+    const filename = `${(resume.title || 'Untitled').replace(/[^a-zA-Z0-9]/g, '_')}_resume.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(Buffer.from(pdfBuffer));
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get('/:id/export/docx', authenticate, async (req, res) => {
-  res.status(501).json({ error: 'DOCX generation is now handled on the frontend client-side.' });
+/**
+ * GET /api/resumes/:id/export/docx
+ * Export resume as DOCX (best-effort). If `html-docx-js` is installed, convert HTML to real .docx.
+ * Otherwise fall back to sending HTML with a .doc extension (Word can open HTML documents).
+ */
+router.get('/:id/export/docx', authenticate, async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.query.token;
+    if (!token) {
+      return res.status(401).json({ error: 'No token, authorization denied' });
+    }
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL || 'https://aihmhvlhthfodikgzfsn.supabase.co',
+      process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaG1odmxodGhmb2Rpa2d6ZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjY4NDAsImV4cCI6MjA5NDg0Mjg0MH0.AEgff0NpZLHr_B2MHx6sFB9V2wNcpLURBveOrMCm2to',
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      }
+    );
+
+    const { data: resume, error } = await supabase
+      .from('resumes')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+
+    if (error || !resume) {
+      return res.status(404).json({ error: 'Resume not found' });
+    }
+
+    // Prefer screenshot-based DOCX generation (renders same HTML preview and embeds PNG pages)
+    try {
+      const docxBuffer = await pdfService.generateDOCX(resume);
+
+      try {
+        await supabase.storage.from('resumes').upload(
+          `${req.params.id}/resume.docx`, 
+          docxBuffer, 
+          { contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', upsert: true }
+        );
+      } catch (uploadErr) {
+        console.warn('Storage upload error (DOCX)', uploadErr.message);
+      }
+
+      await supabase
+        .from('resumes')
+        .update({ downloads: (resume.downloads || 0) + 1 })
+        .eq('id', req.params.id);
+
+      const filename = `${(resume.title || 'Untitled').replace(/[^a-zA-Z0-9]/g, '_')}_resume.docx`;
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      return res.send(Buffer.from(docxBuffer));
+    } catch (screenshotErr) {
+      console.warn('Screenshot-based DOCX generation failed, falling back to HTML .doc response', screenshotErr.message || screenshotErr);
+      
+      const docHtml = pdfService.buildDocxHTML(resume);
+      
+      // Upload fallback .doc to Supabase Storage
+      try {
+        await supabase.storage.from('resumes').upload(
+          `${req.params.id}/resume.doc`, 
+          docHtml, 
+          { contentType: 'application/msword', upsert: true }
+        );
+      } catch (uploadErr) {
+        console.warn('Storage upload error (DOCX fallback)', uploadErr.message);
+      }
+
+      await supabase
+        .from('resumes')
+        .update({ downloads: (resume.downloads || 0) + 1 })
+        .eq('id', req.params.id);
+        
+      const filename = `${(resume.title || 'Untitled').replace(/[^a-zA-Z0-9]/g, '_')}_resume.doc`;
+      res.setHeader('Content-Type', 'application/msword');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(docHtml);
+    }
+  } catch (err) {
+    next(err);
+  }
 });
 
 /**
@@ -312,44 +437,6 @@ router.get('/stats/overview', authenticate, async (req, res, next) => {
     );
 
     res.json({ stats: result.rows[0] });
-  } catch (err) {
-    next(err);
-  }
-});
-
-const express = require('express');
-router.post('/export/docx-image', express.json({limit: '50mb'}), async (req, res, next) => {
-  try {
-    const { image, title } = req.body;
-    if (!image) return res.status(400).json({ error: 'Image required' });
-
-    const { Document, Packer, Paragraph, ImageRun } = require('docx');
-    const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
-    const imageBuffer = Buffer.from(base64Data, 'base64');
-
-    const doc = new Document({
-      sections: [{
-        properties: {
-          page: { margin: { top: 0, right: 0, bottom: 0, left: 0 } }
-        },
-        children: [
-          new Paragraph({
-            children: [
-              new ImageRun({
-                data: imageBuffer,
-                transformation: { width: 794, height: 1123 }
-              })
-            ]
-          })
-        ]
-      }]
-    });
-
-    const docxBuffer = await Packer.toBuffer(doc);
-    
-    res.setHeader('Content-Disposition', `attachment; filename="${title || 'Resume'}.docx"`);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    res.send(docxBuffer);
   } catch (err) {
     next(err);
   }

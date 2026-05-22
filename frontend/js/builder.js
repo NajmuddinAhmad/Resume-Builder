@@ -957,34 +957,42 @@ function initEventListeners(resumeId) {
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
       };
       
-      // Temporarily remove transform scaling for clean capture
-      const originalTransform = element.style.transform;
-      element.style.transform = 'none';
-      
-      const worker = html2pdf().set(opt).from(element);
-      
-      worker.save().then(() => {
-        element.style.transform = originalTransform;
-        showToast('PDF downloaded successfully!', 'success');
-      }).catch(err => {
-        element.style.transform = originalTransform;
-        console.error('PDF generation error:', err);
-        showToast('Failed to generate PDF', 'error');
-      });
-
-      // Background upload to storage
-      if (typeof resumeId !== 'undefined' && resumeId && typeof supabaseClient !== 'undefined') {
-        worker.outputPdf('blob').then(async (blob) => {
-          try {
-            await supabaseClient.storage.from('resumes').upload(`${resumeId}/resume.pdf`, blob, { 
-              upsert: true, 
-              contentType: 'application/pdf' 
-            });
-          } catch (err) {
-            console.error('Storage upload error:', err);
-          }
-        }).catch(e => console.error('Background PDF upload error:', e));
+      // Ensure the preview panel is visible for html2canvas to capture it
+      if (window.innerWidth <= 900) {
+        if (typeof switchMobileTab === 'function') switchMobileTab('preview');
       }
+
+      // Add a slight delay to ensure DOM reflows before capture
+      setTimeout(() => {
+        // Temporarily remove transform scaling for clean capture
+        const originalTransform = element.style.transform;
+        element.style.transform = 'none';
+        
+        const worker = html2pdf().set(opt).from(element);
+        
+        worker.save().then(() => {
+          element.style.transform = originalTransform;
+          showToast('PDF downloaded successfully!', 'success');
+        }).catch(err => {
+          element.style.transform = originalTransform;
+          console.error('PDF generation error:', err);
+          showToast('Failed to generate PDF', 'error');
+        });
+
+        // Background upload to storage
+        if (typeof resumeId !== 'undefined' && resumeId && typeof supabaseClient !== 'undefined') {
+          worker.outputPdf('blob').then(async (blob) => {
+            try {
+              await supabaseClient.storage.from('resumes').upload(`${resumeId}/resume.pdf`, blob, { 
+                upsert: true, 
+                contentType: 'application/pdf' 
+              });
+            } catch (err) {
+              console.error('Storage upload error:', err);
+            }
+          }).catch(e => console.error('Background PDF upload error:', e));
+        }
+      }, 100);
       return;
     }
     
