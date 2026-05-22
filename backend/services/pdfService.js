@@ -4,10 +4,37 @@
  */
 
 let puppeteer = null;
+let chromium = null;
 try {
-  puppeteer = require('puppeteer');
+  if (process.env.VERCEL) {
+    puppeteer = require('puppeteer-core');
+    chromium = require('@sparticuz/chromium');
+  } else {
+    puppeteer = require('puppeteer');
+  }
 } catch (err) {
-  console.warn('⚠️  Puppeteer not available. PDF export will be disabled.');
+  console.warn('⚠️  Puppeteer not available. PDF export will be disabled.', err.message);
+}
+
+async function getBrowser() {
+  if (!puppeteer) {
+    throw new Error('Puppeteer not available.');
+  }
+
+  if (process.env.VERCEL && chromium) {
+    return await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
+    });
+  }
+
+  return await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+  });
 }
 
 const { Document, Packer, Paragraph, ImageRun } = require('docx');
@@ -498,11 +525,7 @@ async function generatePDF(resume) {
   }
 
   const html = buildResumeHTML(resume);
-
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-  });
+  const browser = await getBrowser();
 
   try {
     const page = await browser.newPage();
@@ -526,10 +549,7 @@ async function generateDOCX(resume) {
   }
 
   const html = buildResumeHTML(resume);
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-  });
+  const browser = await getBrowser();
 
   try {
     const page = await browser.newPage();

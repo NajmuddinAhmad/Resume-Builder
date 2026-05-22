@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://aihmhvlhthfodikgzfsn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaG1odmxodGhmb2Rpa2d6ZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjY4NDAsImV4cCI6MjA5NDg0Mjg0MH0.AEgff0NpZLHr_B2MHx6sFB9V2wNcpLURBveOrMCm2to';
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = window.location.hostname.includes('vercel.app') ? '/api' : 'http://localhost:5001/api';
 const AUTH_REDIRECT_URL = `${window.location.origin}/auth.html?tab=login`;
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
