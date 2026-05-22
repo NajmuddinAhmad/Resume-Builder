@@ -265,6 +265,9 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .entry-card-actions {
@@ -578,7 +581,7 @@
   .builder-topbar {
     padding: 0 var(--space-3);
     gap: var(--space-2);
-    overflow: hidden;
+    overflow: visible;
   }
   .builder-topbar-left {
     flex: 1;
@@ -631,7 +634,7 @@
   .form-row {
     grid-template-columns: 1fr !important;
   }
-  .form-row-3 {
+  .form-row.three-col {
     grid-template-columns: 1fr !important;
   }
 

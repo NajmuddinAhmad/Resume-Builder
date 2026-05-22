@@ -440,32 +440,6 @@
 .tag-input:focus {
   box-shadow: none;
 }
-.nav-inner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  justify-content: space-between;
-}
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex-direction: row;
-  flex: 1 1 auto;
-  justify-content: space-evenly;
-}
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: var(--text-sm);
-  color: var(--text);
-  min-width: 80px;
-  flex: 1;
-}
 
 /* ── Switch Toggle ── */
 .switch {
@@ -569,7 +543,7 @@
   }
 
   /* Form rows: always single column on mobile */
-  .form-row, .form-row-3 {
+  .form-row, .form-row.three-col {
     grid-template-columns: 1fr !important;
   }
 }
