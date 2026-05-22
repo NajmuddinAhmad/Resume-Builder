@@ -1004,28 +1004,34 @@ function initEventListeners(resumeId) {
     if (resumeId) {
       showToast('Generating PDF...', 'info');
       try {
-        const url = await API.resumes.exportPDF(resumeId);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Server error generating PDF');
-        
-        const blob = await response.blob();
+        const element = document.getElementById('resumePreview');
         let filename = `${(document.getElementById('resumeTitle').value || 'resume').replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-        const contentDisposition = response.headers.get('Content-Disposition');
-        if (contentDisposition && contentDisposition.includes('filename="')) {
-          filename = contentDisposition.split('filename="')[1].split('"')[0];
-        }
-
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(downloadUrl);
+        
+        const opt = {
+          margin:       0,
+          filename:     filename,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        
+        // Generate and save to user's device
+        await html2pdf().set(opt).from(element).save();
         showToast('PDF downloaded successfully!', 'success');
+        
+        // Upload to Supabase Storage in background
+        html2pdf().set(opt).from(element).output('blob').then(async (pdfBlob) => {
+          try {
+            await supabaseClient.storage.from('resumes').upload(`${resumeId}/resume.pdf`, pdfBlob, {
+              upsert: true,
+              contentType: 'application/pdf'
+            });
+          } catch (e) {
+            console.warn('Background storage upload failed:', e);
+          }
+        });
       } catch (err) {
-        console.error('Fetch PDF error', err);
+        console.error('PDF generation error', err);
         showToast('Failed to download PDF. Try again.', 'error');
       }
     }
