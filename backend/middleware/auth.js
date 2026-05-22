@@ -2,16 +2,10 @@ const { createClient } = require('@supabase/supabase-js');
 const db = require('../config/db');
 const jwtLib = require('jsonwebtoken');
 
-let supabase;
-if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
-  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-} else {
-  supabase = {
-    auth: {
-      getUser: async () => ({ error: new Error('Supabase env vars missing') })
-    }
-  };
-}
+const supabase = createClient(
+  process.env.SUPABASE_URL || 'https://aihmhvlhthfodikgzfsn.supabase.co',
+  process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaG1odmxodGhmb2Rpa2d6ZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjY4NDAsImV4cCI6MjA5NDg0Mjg0MH0.AEgff0NpZLHr_B2MHx6sFB9V2wNcpLURBveOrMCm2to'
+);
 
 async function ensureLocalUser(supabaseUser) {
   if (!supabaseUser || !supabaseUser.id) return;
