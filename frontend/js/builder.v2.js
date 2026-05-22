@@ -898,28 +898,20 @@ function initEventListeners(resumeId) {
 
   // Export PDF
   document.getElementById('exportPDFBtn')?.addEventListener('click', async () => {
-    const w = window.open('', '_blank');
-    if (!w) {
-      showToast('Popup blocked. Please allow popups to download.', 'error');
-      return;
-    }
-    w.document.write('Loading PDF...');
+    showToast('Preparing PDF download...', 'info', 2000);
 
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
     }
 
     if (!(await Auth.isLoggedIn())) {
-      w.close();
       forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
       window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
       return;
     }
     
     if (resumeId) {
-      w.location.href = await API.resumes.exportPDF(resumeId);
-    } else {
-      w.close();
+      window.location.href = await API.resumes.exportPDF(resumeId);
     }
   });
 
@@ -949,32 +941,40 @@ function initEventListeners(resumeId) {
 
   // Print
   document.getElementById('printBtn')?.addEventListener('click', async () => {
-    const w = window.open('', '_blank');
-    if (!w) {
-      showToast('Popup blocked. Please allow popups to print.', 'error');
-      return;
-    }
+    showToast('Preparing print...', 'info', 2000);
 
     if (typeof resumeId !== 'undefined' && resumeId && typeof forceSave === 'function') {
       try { await forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate); } catch (e) {}
     }
 
     if (!(await Auth.isLoggedIn())) {
-      w.close();
       forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
       window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?print=true');
       return;
     }
     
     const preview = document.getElementById('resumePreview');
-    if (!preview) { w.close(); return; }
+    if (!preview) return;
     
-    w.document.open();
-    w.document.write(`<html><head><title>${document.getElementById('resumeTitle').value}</title>
+    let printIframe = document.getElementById('print-iframe');
+    if (!printIframe) {
+      printIframe = document.createElement('iframe');
+      printIframe.id = 'print-iframe';
+      printIframe.style.display = 'none';
+      document.body.appendChild(printIframe);
+    }
+    
+    const doc = printIframe.contentWindow.document;
+    doc.open();
+    doc.write(`<html><head><title>${document.getElementById('resumeTitle').value}</title>
       <style>body{margin:0;padding:0}@media print{*{-webkit-print-color-adjust:exact}}</style>
       </head><body>${preview.innerHTML}</body></html>`);
-    w.document.close();
-    w.print();
+    doc.close();
+    
+    setTimeout(() => {
+      printIframe.contentWindow.focus();
+      printIframe.contentWindow.print();
+    }, 250);
   });
 
   // Share
