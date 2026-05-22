@@ -607,4 +607,4 @@ async function generateDOCX(resume) {
   }
 }
 
-module.exports = { generatePDF, buildResumeHTML, buildDocxHTML };
+module.exports = { generatePDF, buildResumeHTML, buildDocxHTML, generateDOCX };
