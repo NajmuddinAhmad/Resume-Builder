@@ -961,38 +961,30 @@ function initEventListeners(resumeId) {
       const originalTransform = element.style.transform;
       element.style.transform = 'none';
       
-      html2pdf().set(opt).from(element).output('blob').then(async (blob) => {
+      const worker = html2pdf().set(opt).from(element);
+      
+      worker.save().then(() => {
         element.style.transform = originalTransform;
-        
-        // Trigger local download for user
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = opt.filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        
         showToast('PDF downloaded successfully!', 'success');
-        
-        // Save PDF to Supabase Storage bucket in the background
-        if (typeof resumeId !== 'undefined' && resumeId && typeof supabaseClient !== 'undefined') {
-          try {
-            await supabaseClient.storage.from('resumes').upload(`${resumeId}/resume.pdf`, blob, { 
-              upsert: true, 
-              contentType: 'application/pdf' 
-            });
-            console.log('PDF backup saved to Storage');
-          } catch (err) {
-            console.error('Storage upload error:', err);
-          }
-        }
       }).catch(err => {
         element.style.transform = originalTransform;
         console.error('PDF generation error:', err);
         showToast('Failed to generate PDF', 'error');
       });
+
+      // Background upload to storage
+      if (typeof resumeId !== 'undefined' && resumeId && typeof supabaseClient !== 'undefined') {
+        worker.outputPdf('blob').then(async (blob) => {
+          try {
+            await supabaseClient.storage.from('resumes').upload(`${resumeId}/resume.pdf`, blob, { 
+              upsert: true, 
+              contentType: 'application/pdf' 
+            });
+          } catch (err) {
+            console.error('Storage upload error:', err);
+          }
+        }).catch(e => console.error('Background PDF upload error:', e));
+      }
       return;
     }
     
@@ -1006,26 +998,51 @@ function initEventListeners(resumeId) {
 
   // Export DOCX (or .doc fallback)
   document.getElementById('exportDOCXBtn')?.addEventListener('click', (e) => {
-    const token = Auth.getCachedToken?.();
-    if (resumeId && token) {
-      const downloadUrl = `${window.location.origin}/api/resumes/${resumeId}/export/docx?token=${encodeURIComponent(token)}`;
-      const anchor = document.createElement('a');
-      anchor.href = downloadUrl;
-      anchor.download = `${(document.getElementById('resumeTitle').value || 'resume').replace(/[^a-zA-Z0-9]/g, '_')}.docx`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      return;
-    }
-
+    e.preventDefault();
+    const token = Auth.getCachedToken ? Auth.getCachedToken() : null;
+    
     (async () => {
       if (!(await Auth.isLoggedIn())) {
         forceSave(currentSections, currentStyling, document.getElementById('resumeTitle').value, currentTemplate);
         window.location.href = 'auth.html?returnTo=' + encodeURIComponent('builder.html?export=true');
         return;
       }
-      if (resumeId) {
-        window.location.href = await API.resumes.exportDOCX(resumeId);
+      
+      if (!resumeId) {
+        showToast('Please save your resume first', 'warning');
+        return;
+      }
+
+      showToast('Generating DOCX...', 'info');
+      const url = await API.resumes.exportDOCX(resumeId);
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Server error generating DOCX');
+        }
+        const blob = await response.blob();
+        
+        // Extract filename from Content-Disposition if present
+        let filename = `${(document.getElementById('resumeTitle').value || 'resume').replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition && contentDisposition.includes('filename="')) {
+          filename = contentDisposition.split('filename="')[1].split('"')[0];
+        }
+
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(downloadUrl);
+        showToast('DOCX downloaded successfully!', 'success');
+      } catch (err) {
+        console.error('Fetch DOCX error', err);
+        // Fallback to direct navigation
+        window.location.href = url;
       }
     })().catch(err => {
       showToast('Failed to download DOCX: ' + (err.message || err), 'error');
