@@ -8,7 +8,7 @@ let chromium = null;
 try {
   if (process.env.VERCEL) {
     puppeteer = require('puppeteer-core');
-    chromium = require('@sparticuz/chromium');
+    chromium = require('@sparticuz/chromium-min');
   } else {
     puppeteer = require('puppeteer');
   }
@@ -25,7 +25,9 @@ async function getBrowser() {
     return await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath: await chromium.executablePath(
+        'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+      ),
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
