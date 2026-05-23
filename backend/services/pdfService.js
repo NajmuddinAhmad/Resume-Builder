@@ -62,7 +62,6 @@ function buildDocxHTML(resume) {
   const languages = sections.languages || [];
 
   const primaryColor = styling.primaryColor || '#6366f1';
-  const accentColor = styling.accentColor || '#8b5cf6';
   const font = styling.font || 'Inter';
 
   const templatePalette = {
@@ -70,10 +69,12 @@ function buildDocxHTML(resume) {
     silicon: { header: '#0f172a', sidebar: '#ffffff', section: primaryColor },
     artisan: { header: primaryColor, sidebar: primaryColor, section: 'white' },
     horizon: { header: primaryColor, sidebar: '#ffffff', section: primaryColor },
-    executive: { header: '#1a1a2e', sidebar: '#f8fafc', section: '#1a1a2e' }
+    executive: { header: '#1a1a2e', sidebar: '#f8fafc', section: '#1a1a2e' },
+    classic: { header: '#000000', sidebar: '#ffffff', section: '#000000' }
   };
 
   const palette = templatePalette[template_id] || templatePalette.manhattan;
+  const isSingleColumn = ['classic', 'silicon', 'horizon'].includes(template_id);
 
   const esc = (value) => String(value || '')
     .replace(/&/g, '&amp;')
@@ -86,7 +87,7 @@ function buildDocxHTML(resume) {
   const sectionTitle = (label, color) => `
     <tr>
       <td style="padding:14px 0 8px 0;">
-        <div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${color};border-bottom:2px solid ${color};padding-bottom:4px;">${label}</div>
+        <div style="font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${color};border-bottom:2px solid ${color};padding-bottom:4px;">${label}</div>
       </td>
     </tr>`;
 
@@ -96,68 +97,102 @@ function buildDocxHTML(resume) {
     const org = esc(item.company || item.school || '');
     const location = item.location ? ` &bull; ${esc(item.location)}` : '';
     const date = `${esc(item.startDate || '')}${item.startDate ? ' &ndash; ' : ''}${item.current ? 'Present' : esc(item.endDate || '')}`;
-    const description = item.description ? `<div style="font-size:9pt;color:#374151;line-height:1.65;margin-top:4px;">${nl2br(item.description)}</div>` : '';
+    const description = item.description ? `<div style="font-size:9.5pt;color:#374151;line-height:1.65;margin-top:4px;">${nl2br(item.description)}</div>` : '';
     const extraField = item.field ? `<div style="font-size:9pt;color:#64748b;margin-top:2px;">${esc(item.field)}</div>` : '';
     const gpa = item.gpa ? `<div style="font-size:9pt;color:#64748b;margin-top:2px;">GPA: ${esc(item.gpa)}</div>` : '';
-    const technologies = item.technologies ? `<div style="font-size:8.5pt;color:${primaryColor};margin-top:2px;">${esc(item.technologies)}</div>` : '';
+    const technologies = item.technologies ? `<div style="font-size:9pt;color:${palette.section};margin-top:2px;font-weight:600;">${esc(item.technologies)}</div>` : '';
 
     return `
       <tr>
         <td style="padding:0 0 10px 0;">
-          <div style="font-weight:600;font-size:10pt;color:#1a1a2e;">${title}</div>
-          <div style="font-size:9pt;color:#64748b;line-height:1.5;">${org}${location}</div>
-          <div style="font-size:9pt;color:#94a3b8;white-space:nowrap;">${date}</div>
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <tr>
+              <td align="left" style="font-weight:700;font-size:10.5pt;color:#1a1a2e;">${title}</td>
+              <td align="right" style="font-size:9.5pt;color:#94a3b8;white-space:nowrap;">${date}</td>
+            </tr>
+          </table>
+          <div style="font-size:9.5pt;color:#64748b;line-height:1.5;">${org}${location}</div>
           ${description}${extraField}${gpa}${technologies}
         </td>
       </tr>`;
   };
-
-  const skillPill = (value, color, background, border) => `
-    <span style="display:inline-block;margin:2px 4px 2px 0;padding:4px 10px;border-radius:4px;border:1px solid ${border};background:${background};color:${color};font-size:8.5pt;line-height:1.4;">${esc(value)}</span>`;
-
-  const skillsHTML = [
-    ...(skills.technical || []).map(skill => skillPill(skill, primaryColor, `${primaryColor}18`, `${primaryColor}30`)),
-    ...(skills.soft || []).map(skill => skillPill(skill, '#475569', '#f1f5f9', '#e2e8f0'))
-  ].join('');
 
   const contactLine = [personal.email, personal.phone, personal.location, personal.linkedin, personal.website]
     .filter(Boolean)
     .map(esc)
     .join(' &bull; ');
 
-  const leftColumn = `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-      ${personal.summary ? sectionTitle('Professional Summary', palette.section) + `
-        <tr><td style="padding:0 0 8px 0;font-size:9.5pt;line-height:1.7;color:#374151;">${nl2br(personal.summary)}</td></tr>
-      ` : ''}
-      ${experience.length ? sectionTitle('Experience', palette.section) + experience.map(item => entryBlock(item, 'experience')).join('') : ''}
-      ${education.length ? sectionTitle('Education', palette.section) + education.map(item => entryBlock(item, 'education')).join('') : ''}
-      ${projects.length ? sectionTitle('Projects', palette.section) + projects.map(item => entryBlock(item, 'project')).join('') : ''}
-    </table>`;
+  const skillsText = [...(skills.technical || []), ...(skills.soft || [])].join(', ');
+  const skillsHTML = skillsText ? `
+    <tr>
+      <td style="padding:0 0 10px 0;font-size:9.5pt;line-height:1.6;">
+        <strong style="color:${palette.section};">Skills:</strong> ${esc(skillsText)}
+      </td>
+    </tr>` : '';
 
-  const rightColumn = `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-      ${skillsHTML ? `
-        <tr><td style="padding:0 0 8px 0;">
-          <div style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${palette.section};border-bottom:2px solid ${palette.section};padding-bottom:4px;">Skills</div>
-        </td></tr>
-        <tr><td style="padding:0 0 10px 0;">${skillsHTML}</td></tr>
-      ` : ''}
-      ${certifications.length ? sectionTitle('Certifications', palette.section) + certifications.map(item => `
-        <tr><td style="padding:0 0 8px 0;">
-          <div style="font-weight:600;font-size:9pt;color:#1a1a2e;">${esc(item.name || '')}</div>
-          <div style="font-size:8.5pt;color:#64748b;">${esc(item.issuer || '')}${item.year ? ` &bull; ${esc(item.year)}` : ''}</div>
-        </td></tr>
-      `).join('') : ''}
-      ${languages.length ? sectionTitle('Languages', palette.section) + languages.map(item => `
-        <tr><td style="padding:0 0 6px 0;">
-          <div style="font-size:9pt;color:#1a1a2e;display:flex;justify-content:space-between;">
-            <span>${esc(item.language || '')}</span>
-            <span style="color:#94a3b8;">${esc(item.proficiency || '')}</span>
-          </div>
-        </td></tr>
-      `).join('') : ''}
-    </table>`;
+  const certsHTML = certifications.length ? sectionTitle('Certifications', palette.section) + certifications.map(item => `
+    <tr><td style="padding:0 0 6px 0;">
+      <div style="font-weight:600;font-size:10pt;color:#1a1a2e;">&bull; ${esc(item.name || '')}</div>
+      <div style="font-size:9.5pt;color:#64748b;margin-left:12px;">${esc(item.issuer || '')}${item.year ? ` (${esc(item.year)})` : ''}</div>
+    </td></tr>
+  `).join('') : '';
+
+  const langsHTML = languages.length ? sectionTitle('Languages', palette.section) + languages.map(item => `
+    <tr><td style="padding:0 0 6px 0;">
+      <div style="font-size:9.5pt;color:#1a1a2e;">&bull; <strong>${esc(item.language || '')}</strong> &ndash; <span style="color:#64748b;">${esc(item.proficiency || '')}</span></div>
+    </td></tr>
+  `).join('') : '';
+
+  let bodyContent = '';
+
+  if (isSingleColumn) {
+    bodyContent = `
+      <tr>
+        <td style="padding:22px 30px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            ${personal.summary ? sectionTitle('Professional Summary', palette.section) + `
+              <tr><td style="padding:0 0 12px 0;font-size:10pt;line-height:1.7;color:#374151;">${nl2br(personal.summary)}</td></tr>
+            ` : ''}
+            ${skillsHTML ? sectionTitle('Skills', palette.section) + skillsHTML : ''}
+            ${experience.length ? sectionTitle('Experience', palette.section) + experience.map(item => entryBlock(item, 'experience')).join('') : ''}
+            ${education.length ? sectionTitle('Education', palette.section) + education.map(item => entryBlock(item, 'education')).join('') : ''}
+            ${projects.length ? sectionTitle('Projects', palette.section) + projects.map(item => entryBlock(item, 'project')).join('') : ''}
+            ${certsHTML}
+            ${langsHTML}
+          </table>
+        </td>
+      </tr>`;
+  } else {
+    // Two column layout
+    const leftColumn = `
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+        ${personal.summary ? sectionTitle('Professional Summary', palette.section) + `
+          <tr><td style="padding:0 0 8px 0;font-size:10pt;line-height:1.7;color:#374151;">${nl2br(personal.summary)}</td></tr>
+        ` : ''}
+        ${experience.length ? sectionTitle('Experience', palette.section) + experience.map(item => entryBlock(item, 'experience')).join('') : ''}
+        ${education.length ? sectionTitle('Education', palette.section) + education.map(item => entryBlock(item, 'education')).join('') : ''}
+        ${projects.length ? sectionTitle('Projects', palette.section) + projects.map(item => entryBlock(item, 'project')).join('') : ''}
+      </table>`;
+
+    const rightColumn = `
+      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+        ${skillsHTML ? sectionTitle('Skills', palette.section) + skillsHTML : ''}
+        ${certsHTML}
+        ${langsHTML}
+      </table>`;
+
+    bodyContent = `
+      <tr>
+        <td>
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <tr>
+              <td width="70%" style="vertical-align:top;padding:22px 24px 22px 28px;">${leftColumn}</td>
+              <td width="30%" style="vertical-align:top;background:${palette.sidebar};border-left:1px solid #e2e8f0;padding:22px 18px;">${rightColumn}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>`;
+  }
 
   return `
   <!DOCTYPE html>
@@ -165,38 +200,22 @@ function buildDocxHTML(resume) {
   <head>
     <meta charset="utf-8">
     <style>
-      @page { margin: 0.55in; }
-      body { margin: 0; padding: 0; font-family: '${font}', Arial, sans-serif; color: #1a1a2e; }
+      @page { margin: 0.6in; }
+      body { margin: 0; padding: 0; font-family: '${font}', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1a1a2e; }
       table { border-collapse: collapse; }
-      .header-title { font-size: 24pt; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; }
-      .header-contact { margin-top: 6px; font-size: 8.75pt; opacity: 0.92; line-height: 1.5; }
-      .page-shell { width: 100%; }
-      .sidebar-cell { background: ${palette.sidebar}; border-left: 1px solid #e2e8f0; vertical-align: top; }
-      .main-cell { vertical-align: top; }
+      .header-title { font-size: 24pt; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; text-align: center; }
+      .header-contact { margin-top: 8px; font-size: 9.5pt; opacity: 0.95; line-height: 1.5; text-align: center; }
     </style>
   </head>
   <body>
-    <table class="page-shell" width="100%" cellpadding="0" cellspacing="0">
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
       <tr>
-        <td style="background:${palette.header};color:white;padding:26px 28px 22px 28px;">
+        <td style="background:${palette.header};color:white;padding:30px 28px;">
           <div class="header-title">${esc(personal.fullName || 'Your Name')}</div>
           <div class="header-contact">${contactLine || '&nbsp;'}</div>
         </td>
       </tr>
-      <tr>
-        <td>
-          <table width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td class="main-cell" width="70%" style="padding:22px 24px 22px 28px;">
-                ${leftColumn}
-              </td>
-              <td class="sidebar-cell" width="30%" style="padding:22px 18px 22px 18px;">
-                ${rightColumn}
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+      ${bodyContent}
     </table>
   </body>
   </html>`;
