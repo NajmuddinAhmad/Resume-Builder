@@ -359,10 +359,9 @@ function showResumeMenu(btn, resume) {
     e.stopPropagation();
     menu.remove();
     try {
-      const url = await API.resumes.exportPDF(resume.id);
-      window.open(url, '_blank');
+      window.open(`builder.html?id=${resume.id}&export=true`, '_blank');
     } catch (err) {
-      showToast('Could not generate PDF: ' + err.message, 'error');
+      showToast('Could not open PDF export: ' + err.message, 'error');
     }
   });
   menu.querySelector('[data-action="share"]').addEventListener('click', (e) => {

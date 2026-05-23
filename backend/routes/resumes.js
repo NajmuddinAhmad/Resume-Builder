@@ -315,7 +315,7 @@ router.get('/:id/export/docx', authenticate, async (req, res, next) => {
       return res.status(404).json({ error: 'Resume not found' });
     }
 
-    // Prefer screenshot-based DOCX generation (renders same HTML preview and embeds PNG pages)
+    // Use html-docx-js to generate native DOCX buffer
     try {
       const docxBuffer = await pdfService.generateDOCX(resume);
 
