@@ -149,37 +149,49 @@ router.put('/:id', authenticate, async (req, res, next) => {
   try {
     const { title, template_id, sections, styling, ats_score } = req.body;
 
-    const current = await db.query(
-      'SELECT id FROM resumes WHERE id = $1 AND user_id = $2',
-      [req.params.id, req.user.id]
-    );
-
-    if (current.rows.length === 0) {
-      return res.status(404).json({ error: 'Resume not found' });
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.query.token;
+    if (!token) {
+      return res.status(401).json({ error: 'No token, authorization denied' });
     }
 
-    const updates = [];
-    const values = [];
-    let idx = 1;
+    const supabase = createClient(
+      process.env.SUPABASE_URL || 'https://aihmhvlhthfodikgzfsn.supabase.co',
+      process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaG1odmxodGhmb2Rpa2d6ZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjY4NDAsImV4cCI6MjA5NDg0Mjg0MH0.AEgff0NpZLHr_B2MHx6sFB9V2wNcpLURBveOrMCm2to',
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      }
+    );
 
-    if (title !== undefined) { updates.push(`title = $${idx++}`); values.push(title); }
-    if (template_id !== undefined) { updates.push(`template_id = $${idx++}`); values.push(template_id); }
-    if (sections !== undefined) { updates.push(`sections = $${idx++}`); values.push(JSON.stringify(sections)); }
-    if (styling !== undefined) { updates.push(`styling = $${idx++}`); values.push(JSON.stringify(styling)); }
-    if (ats_score !== undefined) { updates.push(`ats_score = $${idx++}`); values.push(ats_score); }
+    const updates = {};
+    if (title !== undefined) updates.title = title;
+    if (template_id !== undefined) updates.template_id = template_id;
+    if (sections !== undefined) updates.sections = sections;
+    if (styling !== undefined) updates.styling = styling;
+    if (ats_score !== undefined) updates.ats_score = ats_score;
+    updates.updated_at = new Date().toISOString();
 
-    if (updates.length === 0) {
+    if (Object.keys(updates).length === 1 && updates.updated_at) {
       return res.json({ message: 'Nothing to update' });
     }
 
-    values.push(req.params.id);
-    const result = await db.query(
-      `UPDATE resumes SET ${updates.join(', ')} WHERE id = $${idx}
-       RETURNING id, title, template_id, ats_score, updated_at`,
-      values
-    );
+    const { data, error } = await supabase
+      .from('resumes')
+      .update(updates)
+      .eq('id', req.params.id)
+      .eq('user_id', req.user.id)
+      .select('id, title, template_id, ats_score, updated_at')
+      .single();
 
-    res.json({ resume: result.rows[0], saved: true });
+    if (error) {
+      console.error('Supabase backend update error:', error.message);
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ resume: data });
   } catch (err) {
     next(err);
   }
