@@ -56,7 +56,11 @@ async function request(endpoint, options = {}) {
     return handleResponse(res);
   } catch (err) {
     if (err.name === 'TypeError' && err.message.includes('fetch')) {
-      throw new Error('Cannot connect to server. Make sure the backend is running on port 5001.');
+      if (isLocalEnv) {
+        throw new Error('Cannot connect to local server. Make sure the backend is running on port 5001.');
+      } else {
+        throw new Error('Network error. Cannot connect to the server (check connection or adblockers).');
+      }
     }
     throw err;
   }
@@ -328,11 +332,11 @@ const API = {
 
   // AI (Mocked for frontend-only execution)
   ai: {
-    generateSummary: async (data) => request('/ai/summary', { method: 'POST', body: JSON.stringify(data) }),
-    suggestSkills: async (data) => request('/ai/skills', { method: 'POST', body: JSON.stringify(data) }),
-    atsScore: async (data) => request('/ai/ats-score', { method: 'POST', body: JSON.stringify(data) }),
-    rewrite: async (data) => request('/ai/rewrite', { method: 'POST', body: JSON.stringify(data) }),
-    optimize: async (data) => request('/ai/optimize', { method: 'POST', body: JSON.stringify(data) })
+    generateSummary: async (data) => request('/assistant/summary', { method: 'POST', body: JSON.stringify(data) }),
+    suggestSkills: async (data) => request('/assistant/skills', { method: 'POST', body: JSON.stringify(data) }),
+    atsScore: async (data) => request('/assistant/ats-score', { method: 'POST', body: JSON.stringify(data) }),
+    rewrite: async (data) => request('/assistant/rewrite', { method: 'POST', body: JSON.stringify(data) }),
+    optimize: async (data) => request('/assistant/optimize', { method: 'POST', body: JSON.stringify(data) })
   }
 };
 

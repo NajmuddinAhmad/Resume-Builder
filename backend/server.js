@@ -69,7 +69,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/templates', templateRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/api/assistant', aiRoutes);
 
 // Dev-only: return a temporary service bearer token for testing (only in development)
 if (process.env.NODE_ENV !== 'production') {

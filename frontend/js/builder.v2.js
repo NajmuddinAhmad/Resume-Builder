@@ -835,8 +835,11 @@ function friendlyAIError(err) {
   if (msg.includes('401') || msg.toLowerCase().includes('unauthorized') || msg.toLowerCase().includes('not logged')) {
     return '🔐 Please <a href="auth.html" style="color:var(--primary)">sign in</a> to use AI features.';
   }
-  if (msg.includes('fetch') || msg.includes('connect') || msg.includes('ECONNREFUSED') || msg.includes('5001')) {
+  if (msg.includes('5001') || msg.includes('local server')) {
     return '⚠️ Backend server not reachable. Make sure it\'s running on port 5001.';
+  }
+  if (msg.includes('fetch') || msg.includes('connect') || msg.includes('ECONNREFUSED') || msg.includes('Network error')) {
+    return '⚠️ Network error. Please check your internet connection or disable adblockers.';
   }
   if (msg.includes('API key') || msg.includes('GEMINI')) {
     return '🔑 AI requires a Gemini API key. Add GEMINI_API_KEY to backend/.env';
