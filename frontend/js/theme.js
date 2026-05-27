@@ -20,6 +20,14 @@ function applyTheme(theme) {
     const isSun = icon.classList.contains('icon-sun');
     icon.style.display = (theme === 'dark' ? !isSun : isSun) ? 'block' : 'none';
   });
+
+  // Update flatpickr theme if it exists
+  const fpTheme = document.getElementById('flatpickr-theme');
+  if (fpTheme) {
+    fpTheme.href = theme === 'dark'
+      ? 'https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css'
+      : 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css';
+  }
 }
 
 function toggleTheme() {
