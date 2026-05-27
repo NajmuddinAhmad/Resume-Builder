@@ -243,8 +243,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function showResetForm(token) {
-    // Could show a password reset panel here
-    // For now, handled via URL params
+  // ── Password Recovery Handling ──
+  window.supabase.createClient(window.ENV?.SUPABASE_URL || 'https://aihmhvlhthfodikgzfsn.supabase.co', window.ENV?.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFpaG1odmxodGhmb2Rpa2d6ZnNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNjY4NDAsImV4cCI6MjA5NDg0Mjg0MH0.AEgff0NpZLHr_B2MHx6sFB9V2wNcpLURBveOrMCm2to').auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      document.querySelectorAll('.auth-form-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('updatePasswordPanel').classList.add('active');
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    }
+  });
+
+  // Check URL hash fallback just in case
+  if (window.location.hash.includes('type=recovery')) {
+    document.querySelectorAll('.auth-form-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('updatePasswordPanel').classList.add('active');
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  }
+
+  // ── Update Password Form ──
+  const updatePasswordForm = document.getElementById('updatePasswordForm');
+  if (updatePasswordForm) {
+    updatePasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('updatePasswordSubmit');
+      const msgEl = document.getElementById('updatePasswordSuccess');
+      const errEl = document.getElementById('updatePasswordError');
+      const password = document.getElementById('updatePasswordInput').value;
+
+      errEl.classList.add('hidden');
+      msgEl.classList.add('hidden');
+      setLoading(btn, true);
+
+      try {
+        await API.auth.resetPassword(password);
+        msgEl.textContent = '✅ Password updated successfully! Redirecting...';
+        msgEl.classList.remove('hidden');
+        setTimeout(() => window.location.href = redirectTarget, 1500);
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.classList.remove('hidden');
+      } finally {
+        setLoading(btn, false);
+      }
+    });
   }
 });
