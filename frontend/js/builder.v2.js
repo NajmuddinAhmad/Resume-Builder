@@ -402,7 +402,7 @@ function entryFormHTML(section, index, item, fields, label) {
         </select>
       </div>`;
     }
-    const inputType = field.includes('Date') ? 'date' : field === 'url' ? 'url' : field === 'year' ? 'number' : 'text';
+    const inputType = field === 'url' ? 'url' : field === 'year' ? 'number' : 'text';
     return `<div class="form-group">
       <label class="form-label" for="${section}-${index}-${field}">${fieldLabel(field)}</label>
       <input type="${inputType}" id="${section}-${index}-${field}" class="form-input entry-field" data-section="${section}" data-index="${index}" data-field="${field}" value="${esc(value)}" placeholder="${fieldPlaceholder(field)}">
@@ -477,6 +477,17 @@ function bindFormEvents(key) {
       onDataChange();
     });
   });
+
+  if (typeof flatpickr !== 'undefined') {
+    flatpickr('.entry-field[data-field="startDate"], .entry-field[data-field="endDate"]', {
+      altInput: true,
+      altFormat: "F Y", // e.g. "September 2021"
+      dateFormat: "Y-m", // value format like "2021-09"
+      onChange: function(selectedDates, dateStr, instance) {
+         instance.element.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+  }
 
   // Skill tag inputs
   bindTagInput('techSkillInput', 'technical');
