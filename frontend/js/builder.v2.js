@@ -402,7 +402,7 @@ function entryFormHTML(section, index, item, fields, label) {
         </select>
       </div>`;
     }
-    const inputType = field === 'url' ? 'url' : field === 'year' ? 'number' : 'text';
+    const inputType = field.includes('Date') ? 'month' : field === 'url' ? 'url' : field === 'year' ? 'number' : 'text';
     return `<div class="form-group">
       <label class="form-label" for="${section}-${index}-${field}">${fieldLabel(field)}</label>
       <input type="${inputType}" id="${section}-${index}-${field}" class="form-input entry-field" data-section="${section}" data-index="${index}" data-field="${field}" value="${esc(value)}" placeholder="${fieldPlaceholder(field)}">
@@ -446,7 +446,7 @@ function fieldPlaceholder(field) {
     gpa: '3.8', name: 'Project Name', technologies: 'React, Node.js, PostgreSQL',
     url: 'https://...', issuer: 'AWS, Google, etc.', year: '2024',
     language: 'Spanish', proficiency: 'Fluent',
-    startDate: 'e.g. Sep 2021', endDate: 'e.g. Present'
+    startDate: 'YYYY-MM', endDate: 'YYYY-MM'
   };
   if (field === 'name') return 'Awards, Volunteering, Interests...';
   if (field === 'description') return 'Add details for this section...';
